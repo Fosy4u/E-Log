@@ -1,0 +1,80 @@
+
+
+body {
+  margin: 0;
+}
+
+.primaryBrandColor {
+  color: #F15A29;
+}
+.secondaryBrandColor {
+  color: #4D148c;
+}
+
+.bg-primaryBrandColor {
+  background-color: #F15A29;
+}
+.bg-secondaryBrandColor {
+  background-color: #4D148c;
+}
+.bg-shade {
+  background-color: rgba(0, 5, 145, 0.09)
+}
+
+
+/* loader */
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.spinner-container .spinner {
+  height: 33px;
+  width: 33px;
+  background-color: whitesmoke;
+  background-image: url("../images/Logo2.png");
+  border-radius: 50%;
+  position: relative;
+  animation: animateRotate 2s linear infinite;
+}
+
+.spinner-container .spinner::before,
+.spinner-container .spinner::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background-color: whitesmoke;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.spinner-container .spinner::before {
+  height: calc(85% + 3px);
+  width: calc(85% + 3px);
+  left: -2px;
+  animation: animateBall 1s infinite linear alternate;
+}
+
+.spinner-container .spinner::after {
+  height: calc(15% + 3px);
+  width: calc(15% + 3px);
+  right: -2px;
+  animation: animateBall 1s infinite linear alternate-reverse;
+}
+
+@keyframes animateBall {
+  from { height: calc(85% + 3px); width: calc(85% + 3px); }
+  to {height: calc(15% + 3px); width: calc(15% + 3px); }
+}
+
+@keyframes animateRotate {
+  to { transform: rotate(360deg); }
+}
+
+
+.partnerAccordionDetails {
+  background-color: #222A45;
+   color: white
+}
