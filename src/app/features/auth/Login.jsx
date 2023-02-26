@@ -194,8 +194,8 @@ const Login = () => {
                           size="small"
                           name="remember"
                           onChange={handleChange}
-                          value={!values.remember}
-                          checked={values.remember}
+                          value={!values.remember }
+                          checked={values?.remember? true : false}
                           sx={{ padding: 0 }}
                         />
 
