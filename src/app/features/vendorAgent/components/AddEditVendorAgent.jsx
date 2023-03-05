@@ -10,7 +10,7 @@ import React, { forwardRef, useRef, useState } from "react";
 
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import CustomerForm from "./VendorAgentForm";
+import VendorAgentForm from "./VendorAgentForm";
 import { Box } from "@mui/system";
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -21,7 +21,7 @@ const AddEditVendorAgent = ({
   showModal,
   setShowModal,
   mode = "create",
-  vendoragent,
+  vendorAgent,
 }) => {
   const childRef = useRef(null);
   const [value, setValue] = useState(0);
@@ -37,7 +37,7 @@ const AddEditVendorAgent = ({
     return childRef.current.validateForm();
   };
   const resetStates = () => {
-    childRef.current.resetStates(vendoragent);
+    childRef.current.resetStates(vendorAgent);
   };
  
   return (
@@ -73,11 +73,11 @@ const AddEditVendorAgent = ({
       </DialogTitle>
       <DialogContent>
         <Box sx={{ width: "100%" }}>
-          <CustomerForm
+          <VendorAgentForm
             ref={childRef}
             value={value}
             setValue={setValue}
-            vendoragent={vendoragent}
+            vendorAgent={vendorAgent}
             mode={mode}
             setDisableSave={setDisableSave}
             callback={() => {

@@ -69,7 +69,7 @@ export const navigations = [
     iconComponent: <InventoryIcon />,
     children: [
       { name: "All Vendors", iconText: "TL", path: "/vendors/" },
-      { name: "Deleted Vendors", iconText: "AT", path: "/vendor/deleted" },
+      { name: "Deleted Vendors", iconText: "AT", path: "/vendors/deleted" },
     ],
   },
   {

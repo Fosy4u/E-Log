@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { Col, OverlayTrigger, Row, Tooltip } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -9,10 +9,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   Slide,
+  Tooltip,
 } from "@mui/material";
 import organisationsApi from "../../../services/organisationsApi.slice";
 import Loader from "../../../utils/Loader";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { globalSelectors } from "../../../global/global.slice";
 
@@ -20,22 +23,26 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const RestoreAndDeletePartnerModal = ({
-  selectedPartner,
-  setSelectedPartner,
+const RestoreAndDeleteVendorModal = ({
+  selectedVendor,
   icon,
   callBack,
   mode,
 }) => {
+  console.log(
+    "🚀 ~ file: RestoreAndDeleteVendorModal.jsx:32 ~ selectedVendor:",
+    selectedVendor
+  );
+  const { organisationId } = useParams();
   const currentUser = useSelector(globalSelectors.selectCurrentUser);
   const [showModal, setShowModal] = useState(false);
-  const [deletePartner, deletePartnerStatus] =
-    organisationsApi.useDeletePartnerMutation();
-  const [restorePartner, restorePartnerStatus] =
-    organisationsApi.useRestorePartnerMutation();
+  const [deleteVendor, deleteVendorStatus] =
+    organisationsApi.useDeleteVendorMutation();
+  const [restoreVendor, restoreVendorStatus] =
+    organisationsApi.useRestoreVendorMutation();
 
   const getPayload = (value) => {
-    return selectedPartner.reduce((acc, item) => {
+    return selectedVendor.reduce((acc, item) => {
       if (item[value]) {
         acc.push(item[value]);
       }
@@ -46,11 +53,12 @@ const RestoreAndDeletePartnerModal = ({
 
   const handleDeleteRestore = () => {
     const payload = {
-      ids: getPayload("_id"),
+      ids: getPayload(mode === "delete" ? "key" : "_id"),
+      organisationId,
       userId: currentUser?._id,
     };
     if (mode === "delete") {
-      deletePartner({
+      deleteVendor({
         payload,
         successHandler: (success, data) => {},
       })
@@ -58,7 +66,6 @@ const RestoreAndDeletePartnerModal = ({
           if (data?.data?.data) {
             setShowModal(false);
             callBack();
-            setSelectedPartner([]);
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -66,14 +73,14 @@ const RestoreAndDeletePartnerModal = ({
           console.error(e.data);
         });
     } else {
-      restorePartner({
+      restoreVendor({
         payload,
         successHandler: (success, data) => {},
       })
         .then((data) => {
           if (data?.data?.data) {
             setShowModal(false);
-            setSelectedPartner([]);
+            callBack();
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -83,29 +90,38 @@ const RestoreAndDeletePartnerModal = ({
     }
   };
 
-  const getTitle = () => {
-    if (selectedPartner[0]?.companyName) return selectedPartner[0].companyName;
+  const getTitle = (item) => {
+    if (mode === "delete") {
+      return item?.contactName;
+    }
 
-    return `${selectedPartner[0]?.firstName} ${selectedPartner[0]?.lastName}`;
+    if (item?.companyName) return item.companyName;
+    if (item?.firstName && item?.lastName)
+      return `${item?.firstName} ${item?.lastName}`;
+    return "vendor";
   };
 
   return (
     <Row>
       <Col>
-        {selectedPartner.length > 0 && (
+        {selectedVendor.length > 0 && (
           <>
             {icon ? (
-              <DeleteIcon
-                onClick={
-                  selectedPartner?.length > 0 ? () => setShowModal(true) : null
-                }
-              />
+              <Tooltip title="Delete">
+                <IconButton
+                  onClick={
+                    selectedVendor?.length > 0 ? () => setShowModal(true) : null
+                  }
+                >
+                  <DeleteIcon color="error" />
+                </IconButton>
+              </Tooltip>
             ) : (
               <Chip
                 color="error"
                 className="btn"
                 onClick={
-                  selectedPartner?.length > 0 ? () => setShowModal(true) : null
+                  selectedVendor?.length > 0 ? () => setShowModal(true) : null
                 }
                 label={mode === "delete" ? "Delete" : "Restore"}
                 size="small"
@@ -126,39 +142,37 @@ const RestoreAndDeletePartnerModal = ({
               aria-describedby="alert-dialog-slide-description"
             >
               <DialogTitle className="secondaryBrandColor">
-                {mode === "delete" ? "Delete Partner" : "Restore Partner"}
+                {mode === "delete" ? "Delete Vendor" : "Restore Vendor"}
               </DialogTitle>
               <DialogContent>
-                <DialogContentText>
-                  {selectedPartner.length === 1 && (
-                    <span>
-                      You want to {mode === "delete" ? "delete " : "restore "}
-                      <strong>{getTitle()}</strong>
-                    </span>
-                  )}
-                  {selectedPartner.length > 1 && (
-                    <span>
-                      You have seleceted following
-                      <strong>
-                        {" "}
-                        {`${selectedPartner?.length}  partners 
+                {selectedVendor.length === 1 && (
+                  <span>
+                    You want to {mode === "delete" ? "delete " : "restore "}
+                    <strong>{getTitle(selectedVendor[0])}</strong>
+                  </span>
+                )}
+                {selectedVendor.length > 1 && (
+                  <span>
+                    You have seleceted following
+                    <strong>
+                      {" "}
+                      {`${selectedVendor?.length}  vendors 
             
              `}{" "}
-                      </strong>{" "}
-                      for {mode === "delete" ? "deletion " : "restoration "}
-                      <ul>
-                        {selectedPartner.map((item) => (
-                          <li key={item._id}>{getTitle()}</li>
-                        ))}
-                      </ul>
-                    </span>
-                  )}
-                </DialogContentText>
+                    </strong>{" "}
+                    for {mode === "delete" ? "deletion " : "restoration "}
+                    <ul>
+                      {selectedVendor.map((item) => (
+                        <li key={item.key}>{getTitle(item)}</li>
+                      ))}
+                    </ul>
+                  </span>
+                )}
 
                 <Loader
                   showLoading={
-                    deletePartnerStatus?.isLoading ||
-                    restorePartnerStatus?.isLoading
+                    deleteVendorStatus?.isLoading ||
+                    restoreVendorStatus?.isLoading
                   }
                 />
               </DialogContent>
@@ -177,7 +191,8 @@ const RestoreAndDeletePartnerModal = ({
                   className="ms-1"
                   variant="contained"
                   disabled={
-                    deletePartnerStatus.isLoading || restorePartnerStatus.isLoading
+                    deleteVendorStatus.isLoading ||
+                    restoreVendorStatus.isLoading
                   }
                   onClick={() => handleDeleteRestore()}
                   type="submit"
@@ -194,4 +209,4 @@ const RestoreAndDeletePartnerModal = ({
   );
 };
 
-export default RestoreAndDeletePartnerModal;
+export default RestoreAndDeleteVendorModal;

@@ -8,25 +8,25 @@ import {
   ListItem,
   ListItemAvatar,
   Slide,
-  IconButton,
   useMediaQuery,
   Button,
-  TextField,
   Chip,
   Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import Stack from "@mui/material/Stack";
 import { Container, Popover, OverlayTrigger } from "react-bootstrap";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import Image from "../../../images/noImage.jpeg";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import Banner from "../../../utils/Banner";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import RestoreAndDeleteCustomerModal from "./RestoreAndDeleteCustomerModal";
 import CustomerContactInfo from "./CustomerContactInfo";
+import FitScreenIcon from "@mui/icons-material/FitScreen";
+import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
+import { Span } from "../../../components/Typography";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,7 +37,7 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
   const [showModal, setShowModal] = useState(false);
   const [detail, setDetail] = useState({});
   const [input, setInput] = useState("");
-
+  const [expandChild, setExpandChild] = useState();
   const [chosenCustomer, setChosenCustomer] = useState();
   const [selectedCustomers, setSelectedCustomers] = useState([]);
   const mode = "restore";
@@ -99,6 +99,16 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
             setSelectedCustomers={setSelectedCustomers}
             mode={mode}
           />
+          <span
+            className="text-primary btn"
+            sx={{ width: matches ? "200px" : "20%" }}
+            onClick={() => {
+              setDetail({ ...chosenCustomer });
+              setShowModal(true);
+            }}
+          >
+            details
+          </span>
         </Stack>
       </Popover.Body>
     </Popover>
@@ -168,13 +178,17 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
         {filteredData.length > 0 && (
           <Container>
             <ListItem>
-              <ListItem sx={{ width: matches ? "300px" : "80%" }}>
+              <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
                 Customer
-              </ListItem>
+              </ListItemText>
 
-              {matches && <ListItem sx={{ width: "200px" }}>Email</ListItem>}
-              {matches && <ListItem sx={{ width: "200px" }}>Phone No</ListItem>}
-              <span sx={{ width: matches ? "200px" : "20%" }}>details</span>
+              {matches && (
+                <ListItemText sx={{ width: "200px" }}>Email</ListItemText>
+              )}
+              {matches && (
+                <ListItemText sx={{ width: "200px" }}>Phone No</ListItemText>
+              )}
+              <span sx={{ width: matches ? "200px" : "20%" }}>Action</span>
             </ListItem>
           </Container>
         )}
@@ -189,9 +203,9 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
           {filteredData &&
             filteredData.map((customer) => {
               return (
-                <Container>
+                <Container key={customer?._id}>
                   <ListItem>
-                    <ListItem sx={{ width: matches ? "300px" : "80%" }}>
+                    <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
                       {matches && (
                         <ListItemAvatar>
                           <Checkbox
@@ -208,28 +222,19 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
                         </ListItemAvatar>
                       )}
                       {getTitle(customer)}
-                    </ListItem>
+                    </ListItemText>
 
                     {matches && (
-                      <ListItem sx={{ width: "200px" }}>
+                      <ListItemText sx={{ width: "200px" }}>
                         {customer?.email}
-                      </ListItem>
+                      </ListItemText>
                     )}
                     {matches && (
-                      <ListItem sx={{ width: "200px" }}>
+                      <ListItemText sx={{ width: "200px" }}>
                         {customer.phoneNo}
-                      </ListItem>
+                      </ListItemText>
                     )}
-                    <span
-                      className="text-primary btn"
-                      sx={{ width: matches ? "200px" : "20%" }}
-                      onClick={() => {
-                        setDetail({ ...customer });
-                        setShowModal(true);
-                      }}
-                    >
-                      details
-                    </span>
+
                     <OverlayTrigger
                       show={chosenCustomer?._id === customer._id}
                       placement="bottom"
@@ -257,7 +262,8 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
       </div>
       <div>
         <Dialog
-          fullWidth={"lg"}
+          fullWidth={true}
+          maxWidth={matches ? "md" : "lg"}
           open={showModal}
           onClose={() => {
             setShowModal(false);
@@ -276,7 +282,35 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
             {getTitle(detail)}
           </DialogTitle>
           <DialogContent className="d-flex justify-content-center partnerAccordionDetails p-2">
-            <CustomerContactInfo customer={detail} />
+            <Span className="d-flex justify-content-center w-100 mt-3">
+              {detail && (
+                <CustomerContactInfo
+                  customer={detail}
+                  expandChild={expandChild}
+                />
+              )}
+              {matches && (
+                <ListItemAvatar className="ms-2">
+                  <Avatar>
+                    {expandChild === "contactInfo" ? (
+                      <UnfoldLessDoubleIcon
+                        color="primary"
+                        onClick={() => setExpandChild("")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    ) : (
+                      <FitScreenIcon
+                        color="primary"
+                        onClick={() => setExpandChild("contactInfo")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    )}
+                  </Avatar>
+                </ListItemAvatar>
+              )}
+            </Span>
           </DialogContent>
           <DialogActions>
             <Button

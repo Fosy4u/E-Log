@@ -57,24 +57,16 @@ const DeletedCustomers = () => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
   }
 
-
   return (
     <div>
       <Main
-         CustomButtons={CustomButtons}
-         title={"Customers"}
-         className="mb-2"
-         showSearchBox
-         placeholder="deleted customers"
-         setInput={setInput}
+        CustomButtons={CustomButtons}
+        title={"Customers"}
+        className="mb-2"
+        showSearchBox
+        placeholder="deleted customers"
+        setInput={setInput}
       >
-        {show && (
-          <DeletedCustomer
-          filteredData={filteredData}
-            isLoading={getCustomersQuery.isLoading}
-          />
-        )}
-        <Loader showLoading={getCustomersQuery?.isLoading} />
         {!getCustomersQuery.isLoading && customers?.length === 0 && (
           <div className="w-100 d-flex text-center justify-content-center ">
             <Banner
@@ -89,6 +81,13 @@ const DeletedCustomers = () => {
             </Banner>
           </div>
         )}
+        {show && (
+          <DeletedCustomer
+            filteredData={filteredData}
+            isLoading={getCustomersQuery.isLoading}
+          />
+        )}
+        <Loader showLoading={getCustomersQuery?.isLoading} />
       </Main>
     </div>
   );

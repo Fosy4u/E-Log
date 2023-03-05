@@ -13,6 +13,7 @@ export default createApi({
     "Trucks",
     "Drivers",
     "Partners",
+    "Trips"
   ],
   endpoints: (builder) => ({
     getOrganisation: builder.query({
@@ -873,7 +874,7 @@ export default createApi({
         );
       },
     }),
-    createVendorAgent: builder.mutation({
+    createVendor: builder.mutation({
       query: ({ payload }) => ({
         url: `/vendorAgent/create`,
         method: "POST",
@@ -891,7 +892,7 @@ export default createApi({
         );
       },
     }),
-    getAllVendorAgents: builder.query({
+    getAllVendors: builder.query({
       query: (arg) => {
         const { organisationId, disabled } = arg;
         return {
@@ -904,12 +905,12 @@ export default createApi({
         responseHandler({}, queryArgs);
       },
     }),
-    getVendorAgent: builder.query({
+    getVendor: builder.query({
       query: (arg) => {
-        const { _id, organisationId } = arg;
+        const {  organisationId, vendorAgentId } = arg;
         return {
           url: `vendorAgent/`,
-          params: { _id, organisationId },
+          params: {  organisationId, vendorAgentId },
         };
       },
       providesTags: ["VendorAgents"],
@@ -917,7 +918,7 @@ export default createApi({
         responseHandler({}, queryArgs);
       },
     }),
-    getVendorAgentRemark: builder.query({
+    getVendorRemark: builder.query({
       query: (arg) => {
         const { _id, organisationId } = arg;
         return {
@@ -931,7 +932,7 @@ export default createApi({
       },
     }),
 
-    editVendorAgent: builder.mutation({
+    editVendor: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/edit`,
         method: "PUT",
@@ -949,7 +950,7 @@ export default createApi({
         );
       },
     }),
-    addVendorAgentRemark: builder.mutation({
+    addVendorRemark: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/addRemark`,
         method: "PUT",
@@ -967,7 +968,7 @@ export default createApi({
         );
       },
     }),
-    deleteVendorAgentRemark: builder.mutation({
+    deleteVendorRemark: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/deleteRemark`,
         method: "PUT",
@@ -985,7 +986,7 @@ export default createApi({
         );
       },
     }),
-    editVendorAgentsRemark: builder.mutation({
+    editVendorRemark: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/editRemark`,
         method: "PUT",
@@ -1003,7 +1004,7 @@ export default createApi({
         );
       },
     }),
-    deleteVendorAgent: builder.mutation({
+    deleteVendor: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/delete`,
         method: "PUT",
@@ -1021,7 +1022,7 @@ export default createApi({
         );
       },
     }),
-    restoreVendorAgent: builder.mutation({
+    restoreVendor: builder.mutation({
       query: ({ payload }) => ({
         url: `vendorAgent/restore`,
         method: "PUT",
@@ -1039,6 +1040,182 @@ export default createApi({
         );
       },
     }),
+
+    createTrip: builder.mutation({
+      query: ({ payload }) => ({
+        url: `/trip/create`,
+        method: "POST",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Trip Successfully Created",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    getAllTrips: builder.query({
+      query: (arg) => {
+        const { organisationId, disabled } = arg;
+        return {
+          url: `tripss/`,
+          params: { organisationId, disabled },
+        };
+      },
+      providesTags: ["Trips"],
+      onQueryStarted: async (_, queryArgs) => {
+        responseHandler({}, queryArgs);
+      },
+    }),
+    getTrip: builder.query({
+      query: (arg) => {
+        const {  organisationId, vendorAgentId } = arg;
+        return {
+          url: `trip/`,
+          params: {  organisationId, vendorAgentId },
+        };
+      },
+      providesTags: ["Trips"],
+      onQueryStarted: async (_, queryArgs) => {
+        responseHandler({}, queryArgs);
+      },
+    }),
+    getTripRemark: builder.query({
+      query: (arg) => {
+        const { _id, organisationId } = arg;
+        return {
+          url: `trip/remarks/`,
+          params: { _id, organisationId },
+        };
+      },
+      providesTags: ["Trips"],
+      onQueryStarted: async (_, queryArgs) => {
+        responseHandler({}, queryArgs);
+      },
+    }),
+
+    editTrip: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/edit`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Trip Successfully Updated",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    addTripRemark: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/addRemark`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Remark added to trip Successfully",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    deleteTripRemark: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/deleteRemark`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Remark on trip Successfully Updated",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    editTripRemark: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/editRemark`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Trip Successfully Updated",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    deleteTrip: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/delete`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: " Trip Successfully Deleted",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    restoreTrip: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/restore`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Trip Successfully Restored",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+
+
+
+
+
+
+
+
+
 
     createContact: builder.mutation({
       query: ({ payload }) => ({

@@ -1,8 +1,8 @@
-import { Box, Button, Paper, Slide } from "@mui/material";
+import { Box, Button, Paper, Slide, useMediaQuery } from "@mui/material";
 import { styled } from "@mui/system";
 import { useState } from "react";
 
-import { Paragraph, Span } from "../../components/Typography";
+import { Paragraph, Span, Tiny } from "../../components/Typography";
 import FilterConditions from "./FilterConditions";
 
 const SidebarRoot = styled("div")(({ theme, width }) => ({
@@ -38,8 +38,8 @@ const SidebarRoot = styled("div")(({ theme, width }) => ({
   },
 }));
 
-const Filter = ({ openFilter, rows }) => {
-  const [filters, setFilters] = useState([]);
+const Filter = ({ openFilter, rows, filters, setFilters, setOpenFilter }) => {
+  const matches = useMediaQuery("(min-width:600px)");
   return (
     <Slide
       direction="left"
@@ -57,24 +57,35 @@ const Filter = ({ openFilter, rows }) => {
       >
         <Paper
           elevation={4}
-          sx={{ height: "50vh", overflow: "scroll", width: "45vw" }}
+          sx={{
+            height: "50vh",
+            overflow: "scroll",
+            width: matches ? "45vw" : "100vw",
+          }}
         >
           <Box>
             {filters?.length > 0 ? (
               <span>
-                <Button variant="outline" sx={{ m: 1 }}>
-                  Clear All
+                <Button
+                  // variant="contained"
+                  sx={{ m: 1 }}
+                  onClick={() => setFilters([])}
+                  color="primary"
+                >
+                  Clear All Filters
                 </Button>
               </span>
             ) : (
-              <span>
-                <Paragraph sx={{ m: 0 }}>No filters applied. </Paragraph>
+              <span className="mt-1 text-danger">
+                <Tiny>No filters applied. </Tiny>
               </span>
             )}
             <FilterConditions
               filters={filters}
               setFilters={setFilters}
               rows={rows}
+              setOpenFilter={setOpenFilter}
+              
             />
           </Box>
         </Paper>

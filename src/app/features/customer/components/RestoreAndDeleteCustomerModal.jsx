@@ -79,10 +79,10 @@ const RestoreAndDeleteCustomerModal = ({
     }
   };
 
-  const getTitle = () => {
-    if (selectedCustomers[0]?.companyName) return selectedCustomers[0].companyName;
+  const getTitle = (item) => {
+    if (item?.companyName) return item.companyName;
 
-    return `${selectedCustomers[0]?.firstName} ${selectedCustomers[0]?.lastName}`;
+    return `${item?.firstName} ${item?.lastName}`;
   };
 
   return (
@@ -93,7 +93,9 @@ const RestoreAndDeleteCustomerModal = ({
             {icon ? (
               <DeleteIcon
                 onClick={
-                  selectedCustomers?.length > 0 ? () => setShowModal(true) : null
+                  selectedCustomers?.length > 0
+                    ? () => setShowModal(true)
+                    : null
                 }
               />
             ) : (
@@ -101,7 +103,9 @@ const RestoreAndDeleteCustomerModal = ({
                 color="error"
                 className="btn"
                 onClick={
-                  selectedCustomers?.length > 0 ? () => setShowModal(true) : null
+                  selectedCustomers?.length > 0
+                    ? () => setShowModal(true)
+                    : null
                 }
                 label={mode === "delete" ? "Delete" : "Restore"}
                 size="small"
@@ -125,31 +129,29 @@ const RestoreAndDeleteCustomerModal = ({
                 {mode === "delete" ? "Delete Customer" : "Restore Customer"}
               </DialogTitle>
               <DialogContent>
-                <DialogContentText>
-                  {selectedCustomers?.length === 1 && (
-                    <span>
-                      You want to {mode === "delete" ? "delete " : "restore "}
-                      <strong>{getTitle()}</strong>
-                    </span>
-                  )}
-                  {selectedCustomers?.length > 1 && (
-                    <span>
-                      You have seleceted following
-                      <strong>
-                        {" "}
-                        {`${selectedCustomers?.length}  customers 
+                {selectedCustomers?.length === 1 && (
+                  <span>
+                    You want to {mode === "delete" ? "delete " : "restore "}
+                    <strong>{getTitle(selectedCustomers[0])}</strong>
+                  </span>
+                )}
+                {selectedCustomers?.length > 1 && (
+                  <span>
+                    You have seleceted following
+                    <strong>
+                      {" "}
+                      {`${selectedCustomers?.length}  customers 
             
              `}{" "}
-                      </strong>{" "}
-                      for {mode === "delete" ? "deletion " : "restoration "}
-                      <ul>
-                        {selectedCustomers?.map((item) => (
-                          <li key={item._id}>{getTitle()}</li>
-                        ))}
-                      </ul>
-                    </span>
-                  )}
-                </DialogContentText>
+                    </strong>{" "}
+                    for {mode === "delete" ? "deletion " : "restoration "}
+                    <ul>
+                      {selectedCustomers?.map((item) => (
+                        <li key={item._id}>{getTitle(item)}</li>
+                      ))}
+                    </ul>
+                  </span>
+                )}
 
                 <Loader
                   showLoading={
@@ -173,7 +175,8 @@ const RestoreAndDeleteCustomerModal = ({
                   className="ms-1"
                   variant="contained"
                   disabled={
-                    deleteCustomerStatus.isLoading || restoreCustomerStatus.isLoading
+                    deleteCustomerStatus.isLoading ||
+                    restoreCustomerStatus.isLoading
                   }
                   onClick={() => handleDeleteRestore()}
                   type="submit"

@@ -1,10 +1,9 @@
-import { Button } from "@mui/material";
+
 import { useEffect, useState } from "react";
 import { Small } from "../../../components/Typography";
-import CollapsibleTable from "../../../utils/CollapsibleTable";
-import DataTable from "../../../utils/DataTable";
 import EnhancedTable from "../../../utils/Table/EnhancedTable";
 import ActionButtons from "./ActionButtons";
+import VendorRemarks from "./VendorRemarks";
 
 // import StatusRowDisplay from "../../../features/productTag/component/StatusRowDisplay";
 // import GetBranchName from "../../utils/GetBranchName";
@@ -19,25 +18,25 @@ const headCells = [
   },
   {
     id: "companyName",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Company Name",
   },
   {
     id: "classification",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Classification",
   },
   {
     id: "phone",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Phone",
   },
   {
     id: "remarks",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Remarks",
   },
@@ -46,6 +45,8 @@ const headCells = [
 const VendorTable = ({ isLoading, allVendors }) => {
   const [selectedRow, setSelectedRow] = useState([]);
   const [selectedVendors, setSelectedVendors] = useState([]);
+  const [remarkVendor, setRemarkVendor] = useState();
+  const [openModal, setOpenModal] = useState(false);
 
   const getRemarks = (remarks) => {
     return (
@@ -54,6 +55,10 @@ const VendorTable = ({ isLoading, allVendors }) => {
           className="text-danger text-decoration-underline"
           role="button"
           size="small"
+          onClick={() => {
+            setRemarkVendor(remarks);
+            setOpenModal(true);
+          }}
         >
           remarks
         </Small>
@@ -65,12 +70,12 @@ const VendorTable = ({ isLoading, allVendors }) => {
     const rows = [];
     allVendors.map((vendor) => {
       const row = {
+        key: vendor._id,
         contactName: `${vendor?.salutation} ${vendor?.firstName} ${vendor?.lastName}`,
         companyName: vendor.companyName ? vendor.companyName : "N/P",
         classification: vendor.classification,
         phone: vendor.phoneNo,
-        remarks:
-          vendor?.remarks?.length > 0 ? getRemarks(vendor.remarks) : "N/P",
+        remarks: vendor?.remarks?.length > 0 ? getRemarks(vendor) : "N/P",
       };
 
       rows.push(row);
@@ -107,6 +112,13 @@ const VendorTable = ({ isLoading, allVendors }) => {
           styleRow
         />
       </div>
+      {remarkVendor && (
+        <VendorRemarks
+          vendor={remarkVendor}
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+        />
+      )}
     </div>
   );
 };

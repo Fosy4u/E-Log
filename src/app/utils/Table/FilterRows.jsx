@@ -3,7 +3,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { IconButton, Tooltip } from "@mui/material";
 import Filter from "./Filter";
 
-export default function FilterRows({ openFilter, setOpenFilter, rows }) {
+export default function FilterRows({ openFilter, setOpenFilter, rows,  filters,
+  setFilters,  }) {
   return (
     <span>
       <Tooltip title="Filter list">
@@ -13,7 +14,12 @@ export default function FilterRows({ openFilter, setOpenFilter, rows }) {
       </Tooltip>
 
       <Box>
-        <Filter openFilter={openFilter} rows={rows} />
+        <Filter openFilter={openFilter} rows={rows} 
+        filters={filters}
+        setFilters={setFilters}
+        setOpenFilter = {setOpenFilter}
+        
+        />
       </Box>
     </span>
   );

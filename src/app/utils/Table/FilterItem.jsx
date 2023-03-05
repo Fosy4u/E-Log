@@ -8,7 +8,8 @@ import {
 } from "@mui/material";
 
 const FilterItem = ({ fields, handleChange, item, index, selectedFields }) => {
-  const [fieldMenu, setFieldMenu] = useState([]);
+console.log("🚀 ~ file: FilterItem.jsx:11 ~ FilterItem ~ item:", item)
+
   const [fieldValue, setFieldValue] = useState();
   const [conditionValue, setConditionValue] = useState("");
   const [value, setValue] = useState("");
@@ -32,7 +33,7 @@ const FilterItem = ({ fields, handleChange, item, index, selectedFields }) => {
   };
 
   const handleFieldChange = (event) => {
-    console.log("event.target.value", event.target.value);
+
     setFieldValue(event.target.value);
     const newItem = {
       field: event.target.value,
@@ -92,18 +93,26 @@ const FilterItem = ({ fields, handleChange, item, index, selectedFields }) => {
             value={conditionValue || ""}
             onChange={handleConditionChange}
           >
+            {typeof fieldValue === "number" && (
+              <MenuItem name={fieldValue} value="equals">
+                Equals (=)
+              </MenuItem>
+            )}
+             {typeof fieldValue !== "number" && (
             <MenuItem name={fieldValue} value="contains">
               Contains (text)
             </MenuItem>
-            <MenuItem name={fieldValue} value="equals">
-              Equals (=)
-            </MenuItem>
-            <MenuItem name={fieldValue} value="greaterThan">
+            )}
+          
+            {typeof fieldValue === "number" && ( <MenuItem name={fieldValue} value="greaterThan">
               Greater (&gt;)
             </MenuItem>
+            )}
+             {typeof fieldValue === "number" && (
             <MenuItem name={fieldValue} value="lessThan">
               Less (&lt;)
             </MenuItem>
+              )}
           </Select>
         </FormControl>
       )}

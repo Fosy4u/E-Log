@@ -13,15 +13,10 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect, useState } from "react";
-import Filter from "./Filter";
-import Slide from "@mui/material/Slide";
 import FilterRows from "./FilterRows";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -140,6 +135,9 @@ function EnhancedTableToolbar(props) {
     setOpenFilter,
     openFilter,
     rows,
+    filters,
+    setFilters,
+    selectedRows,
   } = props;
 
   return (
@@ -176,13 +174,15 @@ function EnhancedTableToolbar(props) {
         </Typography>
       )}
       {numSelected > 0 ? (
-        <ActionButtons numSelected={numSelected} />
+        <ActionButtons selectedRows={selectedRows} />
       ) : (
         filter && (
           <FilterRows
             openFilter={openFilter}
             setOpenFilter={setOpenFilter}
             rows={rows}
+            filters={filters}
+            setFilters={setFilters}
           />
         )
       )}
@@ -207,10 +207,47 @@ export default function EnhancedTable({
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openFilter, setOpenFilter] = useState(false);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [filters, setFilters] = useState([]);
+
+  const escapeRegExp = (value) => {
+    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  };
+  // const searchRegex = new RegExp(escapeRegExp(input), "i");
 
   useEffect(() => {
     if (rows.length > 0) {
-      setFilteredRows(rows);
+      if (!filter) {
+        return setFilteredRows(rows);
+      }
+      if (filters.length > 0) {
+        const filtered = filters.reduce((acc, cum) => {
+          const { field, condition, value } = cum;
+          const searchRegex = new RegExp(escapeRegExp(value), "i");
+          const filtered = rows.filter((row) => {
+            if (condition === "contains") {
+              return searchRegex.test(row[field]);
+            }
+            if (condition === "equals") {
+              return row[field] === value;
+            }
+            if (condition === "greater") {
+              return row[field] > value;
+            }
+            if (condition === "less") {
+              return row[field] < value;
+            }
+          });
+          return [...acc, ...filtered];
+        }, []);
+        return setFilteredRows(filtered);
+      }
+      return setFilteredRows(rows);
+    }
+  }, [filter, filters, rows]);
+
+  useEffect(() => {
+    if (rows.length > 0) {
+      setSelected([]);
     }
   }, [rows]);
 
@@ -222,7 +259,7 @@ export default function EnhancedTable({
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = filteredRows.map((n) => n.name);
+      const newSelected = filteredRows.map((n, index) => index);
       setSelected(newSelected);
       return;
     }
@@ -245,7 +282,6 @@ export default function EnhancedTable({
         selected.slice(selectedIndex + 1)
       );
     }
-
     setSelected(newSelected);
   };
 
@@ -268,6 +304,14 @@ export default function EnhancedTable({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredRows.length) : 0;
 
+  const getSelectedRows = () => {
+    const selectedRows = [];
+    selected.forEach((index) => {
+      selectedRows.push(filteredRows[index]);
+    });
+    return selectedRows;
+  };
+
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2, overflow: "hidden" }}>
@@ -280,6 +324,9 @@ export default function EnhancedTable({
           setOpenFilter={setOpenFilter}
           openFilter={openFilter}
           rows={rows}
+          filters={filters}
+          setFilters={setFilters}
+          selectedRows={getSelectedRows()}
         />
         <TableContainer sx={{ maxHeight: stickyHeader ? "60vh" : "100%" }}>
           <Table

@@ -1,70 +1,73 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import Main from "../../../components/Main";
-import { globalSelectors } from "../../../global/global.slice";
+
 import organisationsApi from "../../../services/organisationsApi.slice";
-import Banner from "../../../utils/Banner";
 import Loader from "../../../utils/Loader";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { globalSelectors } from "../../../global/global.slice";
+import Banner from "../../../utils/Banner";
 import CustomButtons from "../components/CustomButtons";
-import VendorTable from "../components/VendorTable";
+import Main from "../../../components/Main";
+import DeletedVendor from "../components/DeletedVendor";
 
-const VendorAgents = () => {
-  const { organisationId } = useParams();
-
-  const disabled = false;
+const DeletedVendors = () => {
   const token = useSelector(globalSelectors.selectAuthToken);
+  const { organisationId } = useParams();
+  const [show, setShow] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
   const [input, setInput] = useState("");
-
-  const allVendorAgentsQuery = organisationsApi.useGetAllVendorsQuery(
+  const getVendorsQuery = organisationsApi.useGetAllVendorsQuery(
     {
       organisationId,
-      disabled,
+      disabled: true,
     },
-    { skip: !token }
+    { skip: !organisationId || !token }
   );
-  const vendoragents =
-    Array.isArray(allVendorAgentsQuery?.data?.data) &&
-    allVendorAgentsQuery?.data?.data;
+  const vendors = getVendorsQuery?.data?.data;
 
   useEffect(() => {
-    if (vendoragents?.length > 0) {
+    if (vendors?.length > 0) {
+      return setShow(true);
+    }
+  }, [vendors]);
+
+  useEffect(() => {
+    if (vendors?.length > 0) {
       const searchRegex = new RegExp(escapeRegExp(input), "i");
-      const result = vendoragents?.filter(
+      const result = vendors?.filter(
         (vendor) =>
           searchRegex.test(vendor?.firstName) ||
           searchRegex.test(vendor?.lastName) ||
           searchRegex.test(vendor?.companyName) ||
           searchRegex.test(vendor?.email) ||
-          searchRegex.test(vendor?.phoneNo) ||
+          searchRegex.test(vendor?.phone) ||
           searchRegex.test(vendor?.address) ||
-          searchRegex.test(vendor?.country) ||
-          searchRegex.test(vendor?.classification) ||
+          searchRegex.test(vendor?.city) ||
           searchRegex.test(vendor?.region)
       );
 
       setFilteredData(result);
+    } else {
+      setFilteredData([]);
     }
-  }, [input, vendoragents]);
+  }, [input, vendors]);
 
-  const escapeRegExp = (value) => {
+  function escapeRegExp(value) {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  };
+  }
 
   return (
     <div>
       <Main
         CustomButtons={CustomButtons}
-        title={"Vendor / Agents"}
+        title={"vendors"}
         className="mb-2"
         showSearchBox
-        placeholder="search vendors"
+        placeholder="deleted vendors"
         setInput={setInput}
       >
-        <Loader showLoading={allVendorAgentsQuery?.isLoading} />
-        {!allVendorAgentsQuery.isLoading && vendoragents?.length === 0 && (
+        {!getVendorsQuery.isLoading && vendors?.length === 0 && (
           <div className="w-100 d-flex text-center justify-content-center ">
             <Banner
               show={showBanner}
@@ -73,22 +76,20 @@ const VendorAgents = () => {
               className="mb-4"
             >
               <p>
-                <b>No vendoragents to display</b>,
+                <b>No vendors to display</b>,
               </p>
             </Banner>
           </div>
         )}
-        {vendoragents?.length > 0 && (
-          <div className="p-2">
-            <VendorTable
-              allVendors={filteredData}
-              isLoading={allVendorAgentsQuery.isLoading}
-            />
-          </div>
+        {show && (
+          <DeletedVendor
+            filteredData={filteredData}
+            isLoading={getVendorsQuery.isLoading}
+          />
         )}
+        <Loader showLoading={getVendorsQuery?.isLoading} />
       </Main>
     </div>
   );
 };
-
-export default VendorAgents;
+export default DeletedVendors;

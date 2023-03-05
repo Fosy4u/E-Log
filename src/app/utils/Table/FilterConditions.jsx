@@ -1,62 +1,23 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { TransitionGroup } from "react-transition-group";
 import { useEffect, useState } from "react";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import FilterItem from "./FilterItem";
 import RenderListItem from "./RenderListItem";
+import { Tiny } from "../../components/Typography";
 
-const FRUITS = [
-  "🍏 Apple",
-  "🍌 Banana",
-  "🍍 Pineapple",
-  "🥥 Coconut",
-  "🍉 Watermelon",
-];
-
-function renderItem({
-  item,
-  index,
-  handleRemoveFruit,
-  fields,
-  handleChange,
-  selectedFields,
+export default function FilterConditions({
+  filters,
+  setFilters,
+  rows,
+  setOpenFilter,
 }) {
-  return (
-    <ListItem
-      key={index}
-      secondaryAction={
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          title="Delete"
-          onClick={() => handleRemoveFruit(index)}
-        >
-          <DeleteIcon />
-        </IconButton>
-      }
-    >
-      <FilterItem
-        item={item}
-        fields={fields}
-        handleChange={handleChange}
-        index={index}
-        selectedFields={selectedFields}
-      />
-    </ListItem>
-  );
-}
 
-export default function FilterConditions({ filters, setFilters, rows }) {
-  const [fruitsInBasket, setFruitsInBasket] = useState(FRUITS.slice(0, 3));
+
   const [fields, setFields] = useState([]);
   const [selectedFields, setSelectedFields] = useState([]);
+  const [errorText, setErrorText] = useState("");
 
   useEffect(() => {
     if (rows.length === 0) return;
@@ -76,7 +37,7 @@ export default function FilterConditions({ filters, setFilters, rows }) {
   }, [rows]);
 
   useEffect(() => {
-    if (filters.length > 0) return;
+    if (filters.length === 0) return;
     setSelectedFields(filters);
   }, [filters]);
 
@@ -96,6 +57,7 @@ export default function FilterConditions({ filters, setFilters, rows }) {
       next.splice(index, 1);
       return next;
     });
+    
   };
 
   const handleChange = (item, index) => {
@@ -103,10 +65,21 @@ export default function FilterConditions({ filters, setFilters, rows }) {
     next[index] = item;
     setSelectedFields(next);
   };
+  const validateFilter = () => {
+    const valid = selectedFields.every(
+      (item) => item.field && item.condition && item.value
+    );
+    if (!valid) {
+      setErrorText(
+        "Please fill in empty boxes or delete them before applying filters."
+      );
+      return false;
+    }
+    setErrorText("");
+    return true;
+  };
 
-
-
-  const addFruitButton = (
+  const filterButtons = (
     <span className="d-flex justify-content-between m-1 ms-4 me-4">
       <Button
         size="small"
@@ -119,8 +92,13 @@ export default function FilterConditions({ filters, setFilters, rows }) {
       <Button
         size="small"
         variant="contained"
-        disabled={fruitsInBasket.length >= FRUITS.length}
-        onClick={handleAddFilter}
+         disabled={selectedFields.length === 0 && filters.length === 0 }
+        onClick={() => {
+          if (validateFilter()) {
+            setFilters(selectedFields);
+            setOpenFilter(false);
+          }
+        }}
       >
         Apply
       </Button>
@@ -129,8 +107,9 @@ export default function FilterConditions({ filters, setFilters, rows }) {
 
   return (
     <div>
-      {addFruitButton}
+      {filterButtons}
       <Box sx={{ mt: 1 }}>
+        {errorText && <Tiny className="text-danger">{errorText}</Tiny>}
         <List>
           <TransitionGroup>
             {selectedFields.map((item, index) => (

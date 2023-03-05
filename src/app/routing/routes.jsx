@@ -18,6 +18,7 @@ import Truck from "../features/truck/view/Truck";
 import TruckDetail from "../features/truck/view/TruckDetail";
 import DeletedCustomers from "../features/customer/view/DeletedCustomers";
 import VendorAgents from "../features/vendorAgent/view/VendorAgents";
+import DeletedVendors from "../features/vendorAgent/view/DeletedVendors";
 
 const routes = [
   {
@@ -109,10 +110,13 @@ const routes = [
     component: DeletedCustomers,
   },
 
-
   {
     path: "/e-log/:organisationId/vendors/",
     component: VendorAgents,
+  },
+  {
+    path: "/e-log/:organisationId/vendors/deleted",
+    component: DeletedVendors,
   },
 ];
 

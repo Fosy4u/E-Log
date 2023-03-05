@@ -8,10 +8,8 @@ import {
   ListItem,
   ListItemAvatar,
   Slide,
-  IconButton,
   useMediaQuery,
   Button,
-  TextField,
   Chip,
   Checkbox,
   ListItemText,
@@ -19,62 +17,38 @@ import {
 import { Box } from "@mui/system";
 import Stack from "@mui/material/Stack";
 import { Container, Popover, OverlayTrigger } from "react-bootstrap";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import Image from "../../../images/noImage.jpeg";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import Banner from "../../../utils/Banner";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import PartnerContactInfo from "./PartnerContactInfo";
-import RestoreAndDeletePartnerModal from "./RestoreAndDeletePartnerModal";
+import RestoreAndDeleteVendorModal from "./RestoreAndDeleteVendorModal";
+import VednorContactInfo from "./VendorContactInfo";
+import { Span } from "../../../components/Typography";
+import FitScreenIcon from "@mui/icons-material/FitScreen";
+import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeletedPartner = ({ partners, isLoading }) => {
+const DeletedVendor = ({ filteredData, isLoading }) => {
   const matches = useMediaQuery("(min-width:600px)");
   const [showModal, setShowModal] = useState(false);
   const [detail, setDetail] = useState({});
   const [input, setInput] = useState("");
-  const [filteredData, setFilteredData] = useState(partners || []);
-  const [chosenPartner, setChosenPartner] = useState();
-  const [selectedPartners, setSelectedPartners] = useState([]);
+  const [expandChild, setExpandChild] = useState();
+  const [chosenVendor, setChosenVendor] = useState();
+  const [selectedVendors, setSelectedVendors] = useState([]);
   const mode = "restore";
-
-  useEffect(() => {
-    if (partners?.length > 0) {
-      const searchRegex = new RegExp(escapeRegExp(input), "i");
-      const result = partners?.filter(
-        (partner) =>
-          searchRegex.test(partner?.firstName) ||
-          searchRegex.test(partner?.lastName) ||
-          searchRegex.test(partner?.companyName) ||
-          searchRegex.test(partner?.email) ||
-          searchRegex.test(partner?.phone) ||
-          searchRegex.test(partner?.address) ||
-          searchRegex.test(partner?.city) ||
-          searchRegex.test(partner?.region)
-      );
-
-      setFilteredData(result);
-    } else {
-      setFilteredData([]);
-    }
-  }, [input, partners]);
-
-  function escapeRegExp(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  }
 
   const onChange = (value) => {
     setInput(value);
   };
 
   const handleSelectedTruck = (item) => {
-    const sel = [...selectedPartners];
-    const found = sel.find((partner) => partner._id === item._id);
+    const sel = [...selectedVendors];
+    const found = sel.find((vendor) => vendor._id === item._id);
     const index = sel.indexOf(found);
     if (found) {
       sel.splice(index, 1);
@@ -82,12 +56,12 @@ const DeletedPartner = ({ partners, isLoading }) => {
       sel.push(item);
     }
 
-    setSelectedPartners(sel);
+    setSelectedVendors(sel);
   };
 
   // control if item should be checked on not
   const checked = (item) => {
-    const found = selectedPartners.find((partner) => partner._id === item._id);
+    const found = selectedVendors.find((vendor) => vendor._id === item._id);
     if (found) {
       return true;
     }
@@ -97,10 +71,10 @@ const DeletedPartner = ({ partners, isLoading }) => {
   const setSelectAll = () => {
     const newArr = [];
     // eslint-disable-next-line array-callback-return
-    filteredData.map((partner) => {
-      newArr.push(partner);
+    filteredData.map((vendor) => {
+      newArr.push(vendor);
     });
-    setSelectedPartners(newArr);
+    setSelectedVendors(newArr);
   };
 
   const getTitle = (contact) => {
@@ -116,18 +90,20 @@ const DeletedPartner = ({ partners, isLoading }) => {
           direction="column"
           spacing={1}
           className="d-flex flex-column"
-          onMouseLeave={() => setChosenPartner()}
+          onMouseLeave={() => setChosenVendor()}
         >
-          <RestoreAndDeletePartnerModal
-            selectedPartner={[chosenPartner] || []}
-            setSelectedPartners={setSelectedPartners}
+          <RestoreAndDeleteVendorModal
+            selectedVendor={[chosenVendor] || []}
+            callBack={() => {
+              setSelectedVendors([]);
+            }}
             mode={mode}
           />
           <span
             className="text-primary btn"
             sx={{ width: matches ? "200px" : "20%" }}
             onClick={() => {
-              setDetail({ ...chosenPartner });
+              setDetail({ ...chosenVendor });
               setShowModal(true);
             }}
           >
@@ -140,7 +116,7 @@ const DeletedPartner = ({ partners, isLoading }) => {
 
   return (
     <div>
-      {partners?.length > 0 && (
+      {filteredData?.length > 0 && (
         <Box
           sx={{
             p: 0.5,
@@ -148,46 +124,16 @@ const DeletedPartner = ({ partners, isLoading }) => {
           }}
           className="d-flex justify-content-between"
         >
-          <TextField
-            variant="standard"
-            value={input}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Search Deleted Partners"
-            InputProps={{
-              startAdornment: <SearchIcon fontSize="small" />,
-              endAdornment: (
-                <IconButton
-                  title="Clear"
-                  aria-label="Clear"
-                  size="small"
-                  onClick={() => setInput()}
-                >
-                  <ClearIcon fontSize="small" />
-                </IconButton>
-              ),
-            }}
-            sx={{
-              width: {
-                sm: "auto",
-              },
-              m: (theme) => theme.spacing(1, 0.5, 1.5),
-              "& .MuiSvgIcon-root": {
-                mr: 0.5,
-              },
-              "& .MuiInput-underline:before": {
-                borderBottom: 1,
-                borderColor: "divider",
-              },
-            }}
-          />
-
-          {selectedPartners.length > 0 && (
+          {selectedVendors?.length > 0 && (
             <div className="d-flex">
               <span className="m-2">
-                <RestoreAndDeletePartnerModal
-                  selectedPartner={selectedPartners || []}
-                  setSelectedPartners={setSelectedPartners}
+                <RestoreAndDeleteVendorModal
+                  selectedVendor={selectedVendors || []}
+                  callBack={() => {
+                    setSelectedVendors([]);
+                  }}
                   mode={mode}
+                  expandChild={expandChild}
                 />
               </span>
 
@@ -205,13 +151,13 @@ const DeletedPartner = ({ partners, isLoading }) => {
                 className="m-2"
                 size="small"
                 label="  DeSelect All"
-                onClick={() => setSelectedPartners([])}
+                onClick={() => setSelectedVendors([])}
               />
             </div>
           )}
         </Box>
       )}
-      {partners?.length > 0 && (
+      {filteredData?.length > 0 && (
         <div className="w-100 d-flex text-center justify-content-center ">
           <Banner
             show={true}
@@ -220,13 +166,14 @@ const DeletedPartner = ({ partners, isLoading }) => {
             className="mb-4"
           >
             <p>
-              Deleted partners are only retained for 30 days after which will
+              Deleted vendors are only retained for 30 days after which will
               automatically delete permanently and can only be restored by
               contacting support.
             </p>
           </Banner>
         </div>
       )}
+
       <div
         style={{ height: "75vh", overflow: "scroll" }}
         className="w-100 d-flex text-center justify-content-center flex-column "
@@ -235,7 +182,7 @@ const DeletedPartner = ({ partners, isLoading }) => {
           <Container>
             <ListItem>
               <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
-                <strong>Partner</strong>
+                <strong>Vendor</strong>
               </ListItemText>
 
               {matches && (
@@ -256,7 +203,7 @@ const DeletedPartner = ({ partners, isLoading }) => {
               </span>
             </ListItem>
           </Container>
-        )}{" "}
+        )}
         <List
           sx={{
             width: "100%",
@@ -266,8 +213,8 @@ const DeletedPartner = ({ partners, isLoading }) => {
           }}
         >
           {filteredData &&
-            filteredData.map((partner) => (
-              <Container key={partner?._id}>
+            filteredData.map((vendor) => (
+              <Container key={vendor?._id}>
                 <ListItem>
                   <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
                     {matches && (
@@ -279,44 +226,40 @@ const DeletedPartner = ({ partners, isLoading }) => {
                               color: "error",
                             },
                           }}
-                          checked={checked(partner)}
-                          onChange={() => handleSelectedTruck(partner)}
+                          checked={checked(vendor)}
+                          onChange={() => handleSelectedTruck(vendor)}
                           inputProps={{ "aria-label": "controlled" }}
-                        />
-                        <Avatar
-                          alt="avatar"
-                          src={partner?.imageUrl?.link || Image}
                         />
                       </ListItemAvatar>
                     )}
-                    {getTitle(partner)}
+                    {getTitle(vendor)}
                   </ListItemText>
 
                   {matches && (
                     <ListItemText sx={{ width: "200px" }}>
-                      {partner?.email}
+                      {vendor?.email || "N/A"}
                     </ListItemText>
                   )}
                   {matches && (
                     <ListItemText sx={{ width: "200px" }}>
-                      {partner.phoneNo}
+                      {vendor.phoneNo || "N/A"}
                     </ListItemText>
                   )}
 
                   <OverlayTrigger
-                    show={chosenPartner?._id === partner._id}
+                    show={chosenVendor?._id === vendor._id}
                     placement="bottom"
                     overlay={popover}
                   >
                     <Avatar variant="rounded" className="btn">
-                      {chosenPartner?._id === partner._id ? (
+                      {chosenVendor?._id === vendor._id ? (
                         <ExpandLessIcon
-                          onClick={() => setChosenPartner()}
+                          onClick={() => setChosenVendor()}
                           color="error"
                         />
                       ) : (
                         <ExpandMoreIcon
-                          onClick={() => setChosenPartner(partner)}
+                          onClick={() => setChosenVendor(vendor)}
                           color="error"
                         />
                       )}
@@ -348,8 +291,33 @@ const DeletedPartner = ({ partners, isLoading }) => {
             />{" "}
             {getTitle(detail)}
           </DialogTitle>
-          <DialogContent>
-            <PartnerContactInfo partner={detail} />
+          <DialogContent className="d-flex justify-content-center partnerAccordionDetails p-2">
+            <Span className="d-flex justify-content-center w-100 mt-3">
+              {detail && (
+                <VednorContactInfo vendor={detail} expandChild={expandChild} />
+              )}
+              {matches && (
+                <ListItemAvatar className="ms-2">
+                  <Avatar>
+                    {expandChild === "contactInfo" ? (
+                      <UnfoldLessDoubleIcon
+                        color="primary"
+                        onClick={() => setExpandChild("")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    ) : (
+                      <FitScreenIcon
+                        color="primary"
+                        onClick={() => setExpandChild("contactInfo")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    )}
+                  </Avatar>
+                </ListItemAvatar>
+              )}
+            </Span>
           </DialogContent>
           <DialogActions>
             <Button
@@ -366,4 +334,4 @@ const DeletedPartner = ({ partners, isLoading }) => {
   );
 };
 
-export default DeletedPartner;
+export default DeletedVendor;

@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -64,11 +63,11 @@ const VendorAgentForm = forwardRef(
     const [instagram, setInstagram] = useState("");
     const [remark, setRemark] = useState();
     const [createCustomer, createVendorAgentStatus] =
-      organisationsApi.useCreateVendorAgentMutation();
+      organisationsApi.useCreateVendorMutation();
     const createError = createVendorAgentStatus?.error;
-    const [editCustomer, editVendorAgentStatus] =
-      organisationsApi.useEditVendorAgentMutation();
-    const editError = editVendorAgentStatus?.error;
+    const [editVendor, editVendorStatus] =
+      organisationsApi.useEditVendorMutation();
+    const editError = editVendorStatus?.error;
 
     const social = {
       ...(twitter && { twitter }),
@@ -83,7 +82,7 @@ const VendorAgentForm = forwardRef(
         setLastName(vendorAgent.lastName);
         setEmail(vendorAgent.email);
         setPhoneNo(vendorAgent.phoneNo);
-        setType(vendorAgent.type);
+        setType(vendorAgent.type || "individual");
         setAddress(vendorAgent.address);
 
         setRegion(vendorAgent.region);
@@ -98,6 +97,15 @@ const VendorAgentForm = forwardRef(
         setInstagram(vendorAgent.social?.instagram);
         setClassification(vendorAgent?.classification);
         setRemark(vendorAgent.remark);
+        if (
+          !vendorAgent.classification ||
+          !vendorAgent.firstName ||
+          !vendorAgent.lastName ||
+          !vendorAgent.phoneNo
+        ) {
+          return setDisableSave(true);
+        }
+        return setDisableSave(false);
       } else {
         setFirstName("");
         setLastName("");
@@ -118,6 +126,7 @@ const VendorAgentForm = forwardRef(
         setClassification("");
         setRemark("");
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [vendorAgent]);
 
     useEffect(() => {
@@ -156,7 +165,7 @@ const VendorAgentForm = forwardRef(
         errors["type"] = "*Please choose type.";
       }
 
-      console.log(errors);
+  
       setErrormessages(errors);
 
       return formIsValid;
@@ -165,6 +174,7 @@ const VendorAgentForm = forwardRef(
       let formIsValid = false;
 
       if (!classification || !firstName || !lastName || !phoneNo || !type) {
+
         formIsValid = true;
       }
 
@@ -175,7 +185,7 @@ const VendorAgentForm = forwardRef(
       setBannerError();
 
       const payload = {
-        ...(organisationId !== vendorAgent?.organisationId && {
+        ...(organisationId && {
           organisationId,
         }),
         ...(currentUser?._id &&
@@ -183,6 +193,7 @@ const VendorAgentForm = forwardRef(
             userId: currentUser?._id,
           }),
         ...(vendorAgent?._id && { _id: vendorAgent?._id }),
+        ...(vendorAgent?._id && { vendorAgentId: vendorAgent?._id }),
         ...(email && email !== vendorAgent?.email && { email }),
         ...(firstName && firstName !== vendorAgent?.firstName && { firstName }),
         ...(lastName && lastName !== vendorAgent?.lastName && { lastName }),
@@ -211,7 +222,7 @@ const VendorAgentForm = forwardRef(
         ...(remark && { remark }),
       };
       if (mode === "edit") {
-        return editCustomer({
+        return editVendor({
           payload,
         })
           .unwrap()
@@ -300,8 +311,7 @@ const VendorAgentForm = forwardRef(
         </div>
         <Loader
           showLoading={
-            createVendorAgentStatus?.isLoading ||
-            editVendorAgentStatus?.isLoading
+            createVendorAgentStatus?.isLoading || editVendorStatus?.isLoading
           }
         />
         <Box sx={{ width: "100%" }}>
