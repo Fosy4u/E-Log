@@ -7,45 +7,39 @@ import organisationsApi from "../../../services/organisationsApi.slice";
 import Banner from "../../../utils/Banner";
 import Loader from "../../../utils/Loader";
 import CustomButtons from "../components/CustomButtons";
-import PartnerList from "../components/PartnerList";
+import TripList from "../components/TripList";
 
-const Partner = () => {
+const Trips = () => {
   const { organisationId } = useParams();
-
   const disabled = false;
   const token = useSelector(globalSelectors.selectAuthToken);
   const [showBanner, setShowBanner] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
   const [input, setInput] = useState("");
 
-  const allPartnersQuery = organisationsApi.useGetAllPartnersQuery(
+  const allTripsQuery = organisationsApi.useGetAllTripsQuery(
     {
       organisationId,
       disabled,
     },
     { skip: !token }
   );
-  const partners =
-    Array.isArray(allPartnersQuery?.data?.data) && allPartnersQuery?.data?.data;
+  const trips =
+    Array.isArray(allTripsQuery?.data?.data) && allTripsQuery?.data?.data;
 
   useEffect(() => {
-    if (partners?.length > 0) {
+    if (trips?.length > 0) {
       const searchRegex = new RegExp(escapeRegExp(input), "i");
-      const result = partners?.filter(
-        (partner) =>
-          searchRegex.test(partner?.firstName) ||
-          searchRegex.test(partner?.lastName) ||
-          searchRegex.test(partner?.companyName) ||
-          searchRegex.test(partner?.email) ||
-          searchRegex.test(partner?.phone) ||
-          searchRegex.test(partner?.address) ||
-          searchRegex.test(partner?.country) ||
-          searchRegex.test(partner?.region)
-      );
+
+      const result = trips?.filter((row) => {
+        return Object.keys(row).some((field) => {
+          return searchRegex.test(row[field]?.toString());
+        });
+      });
 
       setFilteredData(result);
     }
-  }, [input, partners]);
+  }, [input, trips]);
 
   const escapeRegExp = (value) => {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -55,15 +49,15 @@ const Partner = () => {
     <div>
       <Main
         CustomButtons={CustomButtons}
-        title={"Partners"}
+        title={"Trips"}
         className="mb-2"
         showSearchBox
-        placeholder="search partner"
+        placeholder="search trip"
         setInput={setInput}
       >
-        <Loader showLoading={allPartnersQuery?.isLoading} />
-        {!allPartnersQuery.isLoading && partners?.length === 0 && (
-          <div className="w-100 d-flex text-center justify-content-center mt-3">
+        <Loader showLoading={allTripsQuery?.isLoading} />
+        {!allTripsQuery.isLoading && trips?.length === 0 && (
+          <div className="w-100 d-flex text-center justify-content-center mt-3 ">
             <Banner
               show={showBanner}
               variant="warning"
@@ -71,14 +65,14 @@ const Partner = () => {
               className="mb-4"
             >
               <p>
-                <b>No partners to display</b>,
+                <b>No trips to display</b>,
               </p>
             </Banner>
           </div>
         )}
-        {partners?.length > 0 && (
+        {trips?.length > 0 && (
           <div className="p-2">
-            <PartnerList filteredData={filteredData} partners ={partners}/>
+            <TripList filteredData={filteredData} trips={trips} />
           </div>
         )}
       </Main>
@@ -86,4 +80,4 @@ const Partner = () => {
   );
 };
 
-export default Partner;
+export default Trips;

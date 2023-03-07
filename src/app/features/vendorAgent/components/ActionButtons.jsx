@@ -15,7 +15,7 @@ import FeedIcon from "@mui/icons-material/Feed";
 import { Span } from "../../../components/Typography";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
 import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
-import VednorContactInfo from "./VendorContactInfo";
+import VendorContactInfor from "./VendorContactInfo";
 import { Transition } from "../../../utils/transition";
 import CloseIcon from "@mui/icons-material/Close";
 import AddEditVendorAgent from "./AddEditVendorAgent";
@@ -89,7 +89,7 @@ const ActionButtons = ({ selectedRows }) => {
         <DialogContent className="d-flex justify-content-center partnerAccordionDetails">
           <Span className="d-flex justify-content-center w-100 mt-3">
             {vendorAgent && (
-              <VednorContactInfo
+              <VendorContactInfor
                 vendor={vendorAgent}
                 expandChild={expandChild}
               />

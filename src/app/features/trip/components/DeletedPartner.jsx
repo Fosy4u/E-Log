@@ -26,8 +26,8 @@ import ClearIcon from "@mui/icons-material/Clear";
 import Banner from "../../../utils/Banner";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import PartnerContactInfo from "./PartnerContactInfo";
-import RestoreAndDeletePartnerModal from "./RestoreAndDeletePartnerModal";
+import PartnerContactInfo from "./TripCustomerInfo";
+import RestoreAndDeletePartnerModal from "./RestoreAndDeleteTripPartnerModal";
 import { getTitle } from "../../../utils/getTitle";
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -103,8 +103,6 @@ const DeletedPartner = ({ partners, isLoading }) => {
     });
     setSelectedPartners(newArr);
   };
-
-
 
   const popover = (
     <Popover>

@@ -32,18 +32,11 @@ const VendorAgents = () => {
   useEffect(() => {
     if (vendoragents?.length > 0) {
       const searchRegex = new RegExp(escapeRegExp(input), "i");
-      const result = vendoragents?.filter(
-        (vendor) =>
-          searchRegex.test(vendor?.firstName) ||
-          searchRegex.test(vendor?.lastName) ||
-          searchRegex.test(vendor?.companyName) ||
-          searchRegex.test(vendor?.email) ||
-          searchRegex.test(vendor?.phoneNo) ||
-          searchRegex.test(vendor?.address) ||
-          searchRegex.test(vendor?.country) ||
-          searchRegex.test(vendor?.classification) ||
-          searchRegex.test(vendor?.region)
-      );
+      const result = vendoragents?.filter((row) => {
+        return Object.keys(row).some((field) => {
+          return searchRegex.test(row[field]?.toString());
+        });
+      });
 
       setFilteredData(result);
     }
@@ -65,7 +58,7 @@ const VendorAgents = () => {
       >
         <Loader showLoading={allVendorAgentsQuery?.isLoading} />
         {!allVendorAgentsQuery.isLoading && vendoragents?.length === 0 && (
-          <div className="w-100 d-flex text-center justify-content-center ">
+          <div className="w-100 d-flex text-center justify-content-center mt-3">
             <Banner
               show={showBanner}
               variant="warning"

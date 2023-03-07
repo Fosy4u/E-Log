@@ -334,6 +334,7 @@ const CreadeAndEditPartnerForm = forwardRef(
                 <span className="d-flex">
                   <FormControl sx={{ width: "50%" }} className="me-1  mt-3">
                     <InputLabel>Type</InputLabel>
+                    
                     <Select
                       native
                       required

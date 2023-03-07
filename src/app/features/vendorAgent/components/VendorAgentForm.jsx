@@ -34,7 +34,18 @@ function a11yProps(index) {
 }
 
 const VendorAgentForm = forwardRef(
-  ({ vendorAgent, mode, callback, value, setValue, setDisableSave }, ref) => {
+  (
+    {
+      vendorAgent,
+      mode,
+      callback,
+      value,
+      setValue,
+      setDisableSave,
+      classificationValue,
+    },
+    ref
+  ) => {
     const matches = useMediaQuery("(min-width:600px)");
     const { organisationId } = useParams();
     const currentUser = useSelector(globalSelectors.selectCurrentUser);
@@ -126,8 +137,11 @@ const VendorAgentForm = forwardRef(
         setClassification("");
         setRemark("");
       }
+      if (classificationValue && !vendorAgent) {
+        setClassification(classificationValue);
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [vendorAgent]);
+    }, [vendorAgent, classificationValue]);
 
     useEffect(() => {
       if (editError?.originalStatus === 400) {
@@ -165,7 +179,6 @@ const VendorAgentForm = forwardRef(
         errors["type"] = "*Please choose type.";
       }
 
-  
       setErrormessages(errors);
 
       return formIsValid;
@@ -174,7 +187,6 @@ const VendorAgentForm = forwardRef(
       let formIsValid = false;
 
       if (!classification || !firstName || !lastName || !phoneNo || !type) {
-
         formIsValid = true;
       }
 

@@ -19,6 +19,10 @@ import TruckDetail from "../features/truck/view/TruckDetail";
 import DeletedCustomers from "../features/customer/view/DeletedCustomers";
 import VendorAgents from "../features/vendorAgent/view/VendorAgents";
 import DeletedVendors from "../features/vendorAgent/view/DeletedVendors";
+import AddEditTrips from "../features/trip/view/AddEditTrips";
+import Trips from "../features/trip/view/Trips";
+import Trip from "../features/trip/view/Trip";
+import DeletedTrips from "../features/trip/view/DeletedTrips";
 
 const routes = [
   {
@@ -117,6 +121,27 @@ const routes = [
   {
     path: "/e-log/:organisationId/vendors/deleted",
     component: DeletedVendors,
+  },
+
+  {
+    path: "/e-log/:organisationId/trips/",
+    component: Trips,
+  },
+  {
+    path: "/e-log/:organisationId/trips/:tripId",
+    component: Trip,
+  },
+  {
+    path: "/e-log/:organisationId/trip/add",
+    component: AddEditTrips,
+  },
+  {
+    path: "/e-log/:organisationId/trips/:tripId/edit",
+    component: AddEditTrips,
+  },
+  {
+    path: "/e-log/:organisationId/trips/deleted",
+    component: DeletedTrips,
   },
 ];
 

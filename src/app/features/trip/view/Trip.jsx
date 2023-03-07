@@ -5,39 +5,38 @@ import Main from "../../../components/Main";
 import { globalSelectors } from "../../../global/global.slice";
 import organisationsApi from "../../../services/organisationsApi.slice";
 import Banner from "../../../utils/Banner";
-import { getTitle } from "../../../utils/getTitle";
 import Loader from "../../../utils/Loader";
 import CustomButtons from "../components/CustomButtons";
-import CustomerCard from "../components/CustomerCard";
+import TripCard from "../components/TripCard";
 
-const Customer = () => {
-  const { customerId, organisationId } = useParams();
+
+const Trip = () => {
+  const { tripId, organisationId } = useParams();
 
   const token = useSelector(globalSelectors.selectAuthToken);
   const [showBanner, setShowBanner] = useState(true);
-  const customerQuery = organisationsApi.useGetCustomerQuery(
+  const tripQuerry = organisationsApi.useGetTripQuery(
     {
-      _id: customerId,
-      organisationId,
+      _id: tripId, organisationId
     },
-    { skip: !token || !organisationId || !customerId }
+    { skip: !token }
   );
 
-  const customer = customerQuery?.data?.data;
+  const trip = tripQuerry?.data?.data;
 
-  
+ 
 
   return (
     <div>
       <Main
         CustomButtons={CustomButtons}
-        title={customer?._id ? "Customer - " + getTitle() : "Customer"}
+        title={trip?._id ? "Trip - " + trip?.requestId : "Trip"}
         className="mb-2"
       >
-        <Loader showLoading={customerQuery?.isLoading} />
-        {!customerQuery.isLoading &&
-          !customer?._id &&
-          customerQuery?.isSuccess && (
+        <Loader showLoading={tripQuerry?.isLoading} />
+        {!tripQuerry.isLoading &&
+          !trip?._id &&
+          tripQuerry?.isSuccess && (
             <div className="w-100 d-flex text-center justify-content-center ">
               <Banner
                 show={showBanner}
@@ -46,15 +45,15 @@ const Customer = () => {
                 className="mb-4"
               >
                 <p>
-                  <b>Customer not found</b>,
+                  <b>Trip not found</b>,
                 </p>
               </Banner>
             </div>
           )}
 
-        {customer?._id && (
+        {trip?._id && (
           <div className="p-2 d-flex align-items-center justify-content-center">
-            <CustomerCard customer={customer} />
+            <TripCard trip={trip} />
           </div>
         )}
       </Main>
@@ -62,4 +61,4 @@ const Customer = () => {
   );
 };
 
-export default Customer;
+export default Trip;

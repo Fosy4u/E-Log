@@ -1,21 +1,21 @@
-import { differenceInSeconds } from 'date-fns';
+import { differenceInSeconds } from "date-fns";
 
 export const convertHexToRGB = (hex) => {
   // check if it's a rgba
-  if (hex.match('rgba')) {
-    let triplet = hex.slice(5).split(',').slice(0, -1).join(',');
+  if (hex.match("rgba")) {
+    let triplet = hex.slice(5).split(",").slice(0, -1).join(",");
     return triplet;
   }
 
   let c;
   if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-    c = hex.substring(1).split('');
+    c = hex.substring(1).split("");
     if (c.length === 3) {
       c = [c[0], c[0], c[1], c[1], c[2], c[2]];
     }
-    c = '0x' + c.join('');
+    c = "0x" + c.join("");
 
-    return [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',');
+    return [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",");
   }
 };
 
@@ -130,8 +130,10 @@ export function getTimeDifference(date) {
   if (difference < 60) return `${Math.floor(difference)} sec`;
   else if (difference < 3600) return `${Math.floor(difference / 60)} min`;
   else if (difference < 86400) return `${Math.floor(difference / 3660)} h`;
-  else if (difference < 86400 * 30) return `${Math.floor(difference / 86400)} d`;
-  else if (difference < 86400 * 30 * 12) return `${Math.floor(difference / 86400 / 30)} mon`;
+  else if (difference < 86400 * 30)
+    return `${Math.floor(difference / 86400)} d`;
+  else if (difference < 86400 * 30 * 12)
+    return `${Math.floor(difference / 86400 / 30)} mon`;
   else return `${(difference / 86400 / 30 / 12).toFixed(1)} y`;
 }
 
@@ -144,11 +146,11 @@ export function generateRandomId() {
 export function getQueryParam(prop) {
   var params = {};
   var search = decodeURIComponent(
-    window.location.href.slice(window.location.href.indexOf('?') + 1)
+    window.location.href.slice(window.location.href.indexOf("?") + 1)
   );
-  var definitions = search.split('&');
+  var definitions = search.split("&");
   definitions.forEach(function (val, key) {
-    var parts = val.split('=', 2);
+    var parts = val.split("=", 2);
     params[parts[0]] = parts[1];
   });
   return prop && prop in params ? params[prop] : params;
@@ -158,7 +160,7 @@ export function classList(classes) {
   return Object.entries(classes)
     .filter((entry) => entry[1])
     .map((entry) => entry[0])
-    .join(' ');
+    .join(" ");
 }
 
 export const flat = (array) => {
@@ -170,4 +172,18 @@ export const flat = (array) => {
     }
   });
   return result;
+};
+
+export const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export  const getTripStatusColor = (status) => {
+  switch (status) {
+    case "pending":
+      return "info";
+
+    default:
+      return "secondary";
+  }
 };

@@ -13,8 +13,6 @@ export default function FilterConditions({
   rows,
   setOpenFilter,
 }) {
-
-
   const [fields, setFields] = useState([]);
   const [selectedFields, setSelectedFields] = useState([]);
   const [errorText, setErrorText] = useState("");
@@ -24,7 +22,7 @@ export default function FilterConditions({
     const arr = rows.reduce((acc, row) => {
       const keys = Object.keys(row);
       keys.forEach((key) => {
-        if (!acc.includes(key)) {
+        if (!acc.includes(key) && key !== "key" && !row?.noFilter) {
           acc.push(key);
         }
       });
@@ -57,7 +55,6 @@ export default function FilterConditions({
       next.splice(index, 1);
       return next;
     });
-    
   };
 
   const handleChange = (item, index) => {
@@ -92,7 +89,7 @@ export default function FilterConditions({
       <Button
         size="small"
         variant="contained"
-         disabled={selectedFields.length === 0 && filters.length === 0 }
+        disabled={selectedFields.length === 0 && filters.length === 0}
         onClick={() => {
           if (validateFilter()) {
             setFilters(selectedFields);

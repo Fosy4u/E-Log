@@ -22,6 +22,7 @@ const AddEditVendorAgent = ({
   setShowModal,
   mode = "create",
   vendorAgent,
+  classificationValue
 }) => {
   const childRef = useRef(null);
   const [value, setValue] = useState(0);
@@ -79,6 +80,7 @@ const AddEditVendorAgent = ({
             setValue={setValue}
             vendorAgent={vendorAgent}
             mode={mode}
+            classificationValue={classificationValue}
             setDisableSave={setDisableSave}
             callback={() => {
               setShowModal(false);

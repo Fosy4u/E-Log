@@ -20,7 +20,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import PublicIcon from "@mui/icons-material/Public";
 
 
-const VednorContactInfo = ({ vendor, expandChild }) => {
+const VendorContactInfor = ({ vendor, expandChild }) => {
 
   const matches = useMediaQuery("(min-width:600px)");
 
@@ -317,4 +317,4 @@ const VednorContactInfo = ({ vendor, expandChild }) => {
   );
 };
 
-export default VednorContactInfo;
+export default VendorContactInfor;

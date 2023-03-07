@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, Card } from "@mui/material";
-import {  styled } from "@mui/system";
+import { styled } from "@mui/system";
 import PartnerAccordion from "./PartnerAccordion";
 import PartnerActionButtons from "./PartnerActionButtons";
 import { Link, useParams } from "react-router-dom";
@@ -20,7 +20,7 @@ const CardTitle = styled("div")(({ subtitle }) => ({
 
 const PartnerCard = ({ partner }) => {
   const { partnerId } = useParams();
-  
+
   const getTitle = () => {
     if (partner?.companyName) return partner?.companyName;
 
@@ -39,9 +39,8 @@ const PartnerCard = ({ partner }) => {
                 src={partner?.imageUrl?.link || "/assets/images/face-6.jpg"}
               />
             )}
-            {partner?.companyName && (
-              <CardTitle className="m-1">{getTitle()}</CardTitle>
-            )}
+
+            <CardTitle className="m-1">{getTitle()}</CardTitle>
           </Link>
         )}
         {partnerId && (
@@ -51,9 +50,9 @@ const PartnerCard = ({ partner }) => {
                 src={partner?.imageUrl?.link || "/assets/images/face-6.jpg"}
               />
             )}
-            {partner?.companyName && (
+           
               <CardTitle className="m-1">{getTitle()}</CardTitle>
-            )}
+          
           </span>
         )}
         <PartnerActionButtons partner={partner} />

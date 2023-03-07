@@ -1,10 +1,10 @@
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import ContactEmergencyIcon from "@mui/icons-material/ContactEmergency";
 import CalculateIcon from "@mui/icons-material/Calculate";
-import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import HandshakeIcon from "@mui/icons-material/Handshake";
 import AirlineSeatReclineNormalIcon from "@mui/icons-material/AirlineSeatReclineNormal";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 
 export const navigations = [
   { name: "Dashboard", path: `/dashboard`, icon: "dashboard" },
@@ -21,7 +21,7 @@ export const navigations = [
     name: "Trips",
     icon: "commute",
     children: [
-      { name: "Trip List", iconText: "T", path: "/trip" },
+      { name: "Trip List", iconText: "T", path: "/trips" },
       { name: "Completed Trip", iconText: "CT", path: "/trip/completed" },
       {
         name: "Awaiting Payments",

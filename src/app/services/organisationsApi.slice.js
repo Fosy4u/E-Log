@@ -1063,7 +1063,7 @@ export default createApi({
       query: (arg) => {
         const { organisationId, disabled } = arg;
         return {
-          url: `tripss/`,
+          url: `trips/`,
           params: { organisationId, disabled },
         };
       },
@@ -1074,10 +1074,10 @@ export default createApi({
     }),
     getTrip: builder.query({
       query: (arg) => {
-        const {  organisationId, vendorAgentId } = arg;
+        const {  organisationId, _id, } = arg;
         return {
           url: `trip/`,
-          params: {  organisationId, vendorAgentId },
+          params: {  organisationId, _id, },
         };
       },
       providesTags: ["Trips"],

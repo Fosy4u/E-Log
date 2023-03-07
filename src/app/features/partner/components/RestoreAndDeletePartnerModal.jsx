@@ -15,6 +15,7 @@ import organisationsApi from "../../../services/organisationsApi.slice";
 import Loader from "../../../utils/Loader";
 import { useSelector } from "react-redux";
 import { globalSelectors } from "../../../global/global.slice";
+import { getTitle } from "../../../utils/getTitle";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -83,12 +84,6 @@ const RestoreAndDeletePartnerModal = ({
     }
   };
 
-  const getTitle = () => {
-    if (selectedPartner[0]?.companyName) return selectedPartner[0].companyName;
-
-    return `${selectedPartner[0]?.firstName} ${selectedPartner[0]?.lastName}`;
-  };
-
   return (
     <Row>
       <Col>
@@ -133,7 +128,7 @@ const RestoreAndDeletePartnerModal = ({
                   {selectedPartner.length === 1 && (
                     <span>
                       You want to {mode === "delete" ? "delete " : "restore "}
-                      <strong>{getTitle()}</strong>
+                      <strong>{getTitle(selectedPartner[0])}</strong>
                     </span>
                   )}
                   {selectedPartner.length > 1 && (
@@ -148,7 +143,7 @@ const RestoreAndDeletePartnerModal = ({
                       for {mode === "delete" ? "deletion " : "restoration "}
                       <ul>
                         {selectedPartner.map((item) => (
-                          <li key={item._id}>{getTitle()}</li>
+                          <li key={item._id}>{getTitle(item)}</li>
                         ))}
                       </ul>
                     </span>
@@ -177,7 +172,8 @@ const RestoreAndDeletePartnerModal = ({
                   className="ms-1"
                   variant="contained"
                   disabled={
-                    deletePartnerStatus.isLoading || restorePartnerStatus.isLoading
+                    deletePartnerStatus.isLoading ||
+                    restorePartnerStatus.isLoading
                   }
                   onClick={() => handleDeleteRestore()}
                   type="submit"

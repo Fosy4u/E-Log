@@ -27,6 +27,7 @@ import CustomerContactInfo from "./CustomerContactInfo";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
 import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
 import { Span } from "../../../components/Typography";
+import { getTitle } from "../../../utils/getTitle";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -79,11 +80,7 @@ const DeletedCustomer = ({ filteredData, isLoading }) => {
     setSelectedCustomers(newArr);
   };
 
-  const getTitle = (contact) => {
-    if (contact?.companyName) return contact?.companyName;
-
-    return `${contact?.firstName} ${contact?.lastName}`;
-  };
+  
 
   const popover = (
     <Popover>

@@ -220,25 +220,31 @@ export default function EnhancedTable({
         return setFilteredRows(rows);
       }
       if (filters.length > 0) {
-        const filtered = filters.reduce((acc, cum) => {
-          const { field, condition, value } = cum;
-          const searchRegex = new RegExp(escapeRegExp(value), "i");
-          const filtered = rows.filter((row) => {
-            if (condition === "contains") {
-              return searchRegex.test(row[field]);
-            }
-            if (condition === "equals") {
-              return row[field] === value;
-            }
-            if (condition === "greater") {
-              return row[field] > value;
-            }
-            if (condition === "less") {
-              return row[field] < value;
-            }
-          });
-          return [...acc, ...filtered];
-        }, []);
+        const filtered = filters.reduce(
+          (acc, cum) => {
+            const { field, condition, value } = cum;
+            const searchRegex = new RegExp(escapeRegExp(value), "i");
+
+            const filtered = acc.filter((row) => {
+              if (condition === "contains") {
+                return searchRegex.test(
+                  row[field]?.props?.children || row[field]
+                );
+              }
+              if (condition === "equals") {
+                return row[field]?.props?.children || row[field] === value;
+              }
+              if (condition === "greater") {
+                return row[field]?.props?.children || row[field] > value;
+              }
+              if (condition === "less") {
+                return row[field]?.props?.children || row[field] < value;
+              }
+            });
+            return filtered;
+          },
+          [...rows]
+        );
         return setFilteredRows(filtered);
       }
       return setFilteredRows(rows);

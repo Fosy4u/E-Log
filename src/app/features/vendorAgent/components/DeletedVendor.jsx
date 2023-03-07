@@ -23,10 +23,11 @@ import Banner from "../../../utils/Banner";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import RestoreAndDeleteVendorModal from "./RestoreAndDeleteVendorModal";
-import VednorContactInfo from "./VendorContactInfo";
+import VendorContactInfor from "./VendorContactInfo";
 import { Span } from "../../../components/Typography";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
 import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
+import { getTitle } from "../../../utils/getTitle";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -77,11 +78,7 @@ const DeletedVendor = ({ filteredData, isLoading }) => {
     setSelectedVendors(newArr);
   };
 
-  const getTitle = (contact) => {
-    if (contact?.companyName) return contact?.companyName;
-
-    return `${contact?.firstName} ${contact?.lastName}`;
-  };
+ 
 
   const popover = (
     <Popover>
@@ -294,7 +291,7 @@ const DeletedVendor = ({ filteredData, isLoading }) => {
           <DialogContent className="d-flex justify-content-center partnerAccordionDetails p-2">
             <Span className="d-flex justify-content-center w-100 mt-3">
               {detail && (
-                <VednorContactInfo vendor={detail} expandChild={expandChild} />
+                <VendorContactInfor vendor={detail} expandChild={expandChild} />
               )}
               {matches && (
                 <ListItemAvatar className="ms-2">
