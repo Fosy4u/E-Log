@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Small } from "../../../components/Typography";
 import EnhancedTable from "../../../utils/Table/EnhancedTable";
@@ -70,12 +69,17 @@ const VendorTable = ({ isLoading, allVendors }) => {
     const rows = [];
     allVendors.map((vendor) => {
       const row = {
-        key: vendor._id,
-        contactName: `${vendor?.salutation} ${vendor?.firstName} ${vendor?.lastName}`,
-        companyName: vendor.companyName ? vendor.companyName : "N/P",
-        classification: vendor.classification,
-        phone: vendor.phoneNo,
-        remarks: vendor?.remarks?.length > 0 ? getRemarks(vendor) : "N/P",
+        key: { value: vendor._id, noFilter: true },
+        contactName: {
+          value: `${vendor?.salutation} ${vendor?.firstName} ${vendor?.lastName}`,
+        },
+        companyName: { value: vendor.companyName ? vendor.companyName : "N/P" },
+        classification: { value: vendor.classification },
+        phone: { value: vendor.phoneNo },
+        remarks: {
+          value: vendor?.remarks?.length > 0 ? getRemarks(vendor) : "N/P",
+          noFilter: true,
+        },
       };
 
       rows.push(row);

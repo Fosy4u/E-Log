@@ -18,6 +18,7 @@ import Switch from "@mui/material/Switch";
 import { visuallyHidden } from "@mui/utils";
 import { useEffect, useState } from "react";
 import FilterRows from "./FilterRows";
+import { numberWithCommas } from "../utils";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
@@ -170,7 +171,11 @@ function EnhancedTableToolbar(props) {
           id="tableTitle"
           component="div"
         >
-          {rowsLength} {title || "Items"}
+          {rowsLength} {rowsLength > 1 ? title : title.slice(0, -1) }
+          {filters?.length > 0 &&
+            ` ( ${filters?.length}  ${
+              filters?.length > 1 ? "applied filters" : "applied filter"
+            }) `}
         </Typography>
       )}
       {numSelected > 0 ? (
@@ -227,18 +232,32 @@ export default function EnhancedTable({
 
             const filtered = acc.filter((row) => {
               if (condition === "contains") {
+                console.log(
+                  "my guy",
+                  field,
+                  row[field]?.value?.props?.children
+                );
                 return searchRegex.test(
-                  row[field]?.props?.children || row[field]
+                  row[field]?.value?.props?.children || row[field]?.value
                 );
               }
               if (condition === "equals") {
-                return row[field]?.props?.children || row[field] === value;
+                return (
+                  row[field]?.value?.props?.children ||
+                  row[field]?.value === value
+                );
               }
               if (condition === "greater") {
-                return row[field]?.props?.children || row[field] > value;
+                return (
+                  row[field]?.value?.props?.children ||
+                  row[field]?.value > value
+                );
               }
               if (condition === "less") {
-                return row[field]?.props?.children || row[field] < value;
+                return (
+                  row[field]?.value?.props?.children ||
+                  row[field]?.value < value
+                );
               }
             });
             return filtered;
@@ -317,7 +336,12 @@ export default function EnhancedTable({
     });
     return selectedRows;
   };
-
+  const getRowValue = (headCell, row) => {
+    if (headCell?.numberWithCommas) {
+      return numberWithCommas(row[headCell.id]?.value);
+    }
+    return row[headCell.id]?.value;
+  };
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2, overflow: "hidden" }}>
@@ -380,7 +404,7 @@ export default function EnhancedTable({
                       {headCells.map((headCell) => {
                         return (
                           <TableCell key={headCell.id}>
-                            {row[headCell.id]}
+                            {getRowValue(headCell, row)}
                           </TableCell>
                         );
                       })}
@@ -407,7 +431,7 @@ export default function EnhancedTable({
                       {headCells.map((headCell) => {
                         return (
                           <TableCell key={headCell.id}>
-                            {row[headCell.id]}
+                            {getRowValue(headCell, row)}
                           </TableCell>
                         );
                       })}

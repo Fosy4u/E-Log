@@ -29,10 +29,6 @@ const RestoreAndDeleteVendorModal = ({
   callBack,
   mode,
 }) => {
-  console.log(
-    "🚀 ~ file: RestoreAndDeleteVendorModal.jsx:32 ~ selectedVendor:",
-    selectedVendor
-  );
   const { organisationId } = useParams();
   const currentUser = useSelector(globalSelectors.selectCurrentUser);
   const [showModal, setShowModal] = useState(false);
@@ -43,8 +39,8 @@ const RestoreAndDeleteVendorModal = ({
 
   const getPayload = (value) => {
     return selectedVendor.reduce((acc, item) => {
-      if (item[value]) {
-        acc.push(item[value]);
+      if (item[value]?.value || item[value]) {
+        acc.push(item[value]?.value || item[value]);
       }
 
       return acc;
@@ -92,7 +88,7 @@ const RestoreAndDeleteVendorModal = ({
 
   const getTitle = (item) => {
     if (mode === "delete") {
-      return item?.contactName;
+      return item?.contactName?.value || item?.contactName;
     }
 
     if (item?.companyName) return item.companyName;
@@ -145,13 +141,13 @@ const RestoreAndDeleteVendorModal = ({
                 {mode === "delete" ? "Delete Vendor" : "Restore Vendor"}
               </DialogTitle>
               <DialogContent>
-                {selectedVendor.length === 1 && (
+                {selectedVendor?.length === 1 && (
                   <span>
                     You want to {mode === "delete" ? "delete " : "restore "}
                     <strong>{getTitle(selectedVendor[0])}</strong>
                   </span>
                 )}
-                {selectedVendor.length > 1 && (
+                {selectedVendor?.length > 1 && (
                   <span>
                     You have seleceted following
                     <strong>
@@ -162,8 +158,8 @@ const RestoreAndDeleteVendorModal = ({
                     </strong>{" "}
                     for {mode === "delete" ? "deletion " : "restoration "}
                     <ul>
-                      {selectedVendor.map((item) => (
-                        <li key={item.key}>{getTitle(item)}</li>
+                      {selectedVendor.map((item, index) => (
+                        <li key={index}>{getTitle(item)}</li>
                       ))}
                     </ul>
                   </span>

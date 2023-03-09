@@ -9,7 +9,7 @@ export default function FilterRows({ openFilter, setOpenFilter, rows,  filters,
     <span>
       <Tooltip title="Filter list">
         <IconButton onClick={() => setOpenFilter(!openFilter)}>
-          <FilterListIcon color="primary" />
+          <FilterListIcon color={filters?.length > 0 ? "success" : "primary"} />
         </IconButton>
       </Tooltip>
 

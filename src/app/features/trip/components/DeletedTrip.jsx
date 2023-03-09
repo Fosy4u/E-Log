@@ -8,10 +8,8 @@ import {
   ListItem,
   ListItemAvatar,
   Slide,
-  IconButton,
   useMediaQuery,
   Button,
-  TextField,
   Chip,
   Checkbox,
   ListItemText,
@@ -19,63 +17,43 @@ import {
 import { Box } from "@mui/system";
 import Stack from "@mui/material/Stack";
 import { Container, Popover, OverlayTrigger } from "react-bootstrap";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import Image from "../../../images/noImage.jpeg";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import Banner from "../../../utils/Banner";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import PartnerContactInfo from "./TripCustomerInfo";
-import RestoreAndDeletePartnerModal from "./RestoreAndDeleteTripPartnerModal";
+
+import { Span } from "../../../components/Typography";
+import FitScreenIcon from "@mui/icons-material/FitScreen";
+import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
 import { getTitle } from "../../../utils/getTitle";
+import TripInfo from "./TripInfo";
+import RestoreAndDeleteTripModal from "./RestoreAndDeleteTripModal";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const DeletedPartner = ({ partners, isLoading }) => {
+const DeletedTrip = ({ filteredData, isLoading }) => {
+  const { organisationId } = useParams();
+  const navigate = useNavigate();
   const matches = useMediaQuery("(min-width:600px)");
   const [showModal, setShowModal] = useState(false);
   const [detail, setDetail] = useState({});
   const [input, setInput] = useState("");
-  const [filteredData, setFilteredData] = useState(partners || []);
-  const [chosenPartner, setChosenPartner] = useState();
-  const [selectedPartners, setSelectedPartners] = useState([]);
+  const [expandChild, setExpandChild] = useState();
+  const [chosenTrip, setChosenTrip] = useState();
+  const [selectedTrips, setSelectedTrips] = useState([]);
   const mode = "restore";
-
-  useEffect(() => {
-    if (partners?.length > 0) {
-      const searchRegex = new RegExp(escapeRegExp(input), "i");
-      const result = partners?.filter(
-        (partner) =>
-          searchRegex.test(partner?.firstName) ||
-          searchRegex.test(partner?.lastName) ||
-          searchRegex.test(partner?.companyName) ||
-          searchRegex.test(partner?.email) ||
-          searchRegex.test(partner?.phone) ||
-          searchRegex.test(partner?.address) ||
-          searchRegex.test(partner?.city) ||
-          searchRegex.test(partner?.region)
-      );
-
-      setFilteredData(result);
-    } else {
-      setFilteredData([]);
-    }
-  }, [input, partners]);
-
-  function escapeRegExp(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-  }
 
   const onChange = (value) => {
     setInput(value);
   };
 
   const handleSelectedTruck = (item) => {
-    const sel = [...selectedPartners];
-    const found = sel.find((partner) => partner._id === item._id);
+    const sel = [...selectedTrips];
+    const found = sel.find((trip) => trip._id === item._id);
     const index = sel.indexOf(found);
     if (found) {
       sel.splice(index, 1);
@@ -83,12 +61,12 @@ const DeletedPartner = ({ partners, isLoading }) => {
       sel.push(item);
     }
 
-    setSelectedPartners(sel);
+    setSelectedTrips(sel);
   };
 
   // control if item should be checked on not
   const checked = (item) => {
-    const found = selectedPartners.find((partner) => partner._id === item._id);
+    const found = selectedTrips.find((trip) => trip._id === item._id);
     if (found) {
       return true;
     }
@@ -98,10 +76,10 @@ const DeletedPartner = ({ partners, isLoading }) => {
   const setSelectAll = () => {
     const newArr = [];
     // eslint-disable-next-line array-callback-return
-    filteredData.map((partner) => {
-      newArr.push(partner);
+    filteredData.map((trip) => {
+      newArr.push(trip);
     });
-    setSelectedPartners(newArr);
+    setSelectedTrips(newArr);
   };
 
   const popover = (
@@ -111,18 +89,20 @@ const DeletedPartner = ({ partners, isLoading }) => {
           direction="column"
           spacing={1}
           className="d-flex flex-column"
-          onMouseLeave={() => setChosenPartner()}
+          onMouseLeave={() => setChosenTrip()}
         >
-          <RestoreAndDeletePartnerModal
-            selectedPartner={[chosenPartner] || []}
-            setSelectedPartners={setSelectedPartners}
+          <RestoreAndDeleteTripModal
+            selectedTrip={[chosenTrip] || []}
             mode={mode}
+            callBack={() => {
+              navigate(`/e-log/${organisationId}/trips`);
+            }}
           />
           <span
             className="text-primary btn"
             sx={{ width: matches ? "200px" : "20%" }}
             onClick={() => {
-              setDetail({ ...chosenPartner });
+              setDetail({ ...chosenTrip });
               setShowModal(true);
             }}
           >
@@ -135,7 +115,7 @@ const DeletedPartner = ({ partners, isLoading }) => {
 
   return (
     <div>
-      {partners?.length > 0 && (
+      {filteredData?.length > 0 && (
         <Box
           sx={{
             p: 0.5,
@@ -143,46 +123,17 @@ const DeletedPartner = ({ partners, isLoading }) => {
           }}
           className="d-flex justify-content-between"
         >
-          <TextField
-            variant="standard"
-            value={input}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Search Deleted Partners"
-            InputProps={{
-              startAdornment: <SearchIcon fontSize="small" />,
-              endAdornment: (
-                <IconButton
-                  title="Clear"
-                  aria-label="Clear"
-                  size="small"
-                  onClick={() => setInput()}
-                >
-                  <ClearIcon fontSize="small" />
-                </IconButton>
-              ),
-            }}
-            sx={{
-              width: {
-                sm: "auto",
-              },
-              m: (theme) => theme.spacing(1, 0.5, 1.5),
-              "& .MuiSvgIcon-root": {
-                mr: 0.5,
-              },
-              "& .MuiInput-underline:before": {
-                borderBottom: 1,
-                borderColor: "divider",
-              },
-            }}
-          />
-
-          {selectedPartners.length > 0 && (
+          {selectedTrips?.length > 0 && (
             <div className="d-flex">
               <span className="m-2">
-                <RestoreAndDeletePartnerModal
-                  selectedPartner={selectedPartners || []}
-                  setSelectedPartners={setSelectedPartners}
+                <RestoreAndDeleteTripModal
+                  selectedTrip={selectedTrips || []}
+                  callBack={() => {
+                    setSelectedTrips([]);
+                    navigate(`/e-log/${organisationId}/trips`);
+                  }}
                   mode={mode}
+                  expandChild={expandChild}
                 />
               </span>
 
@@ -200,13 +151,13 @@ const DeletedPartner = ({ partners, isLoading }) => {
                 className="m-2"
                 size="small"
                 label="  DeSelect All"
-                onClick={() => setSelectedPartners([])}
+                onClick={() => setSelectedTrips([])}
               />
             </div>
           )}
         </Box>
       )}
-      {partners?.length > 0 && (
+      {filteredData?.length > 0 && (
         <div className="w-100 d-flex text-center justify-content-center ">
           <Banner
             show={true}
@@ -215,13 +166,14 @@ const DeletedPartner = ({ partners, isLoading }) => {
             className="mb-4"
           >
             <p>
-              Deleted partners are only retained for 30 days after which will
+              Deleted trips are only retained for 30 days after which will
               automatically delete permanently and can only be restored by
               contacting support.
             </p>
           </Banner>
         </div>
       )}
+
       <div
         style={{ height: "75vh", overflow: "scroll" }}
         className="w-100 d-flex text-center justify-content-center flex-column "
@@ -230,19 +182,19 @@ const DeletedPartner = ({ partners, isLoading }) => {
           <Container>
             <ListItem>
               <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
-                <strong>Partner</strong>
+                <strong>Trip Id</strong>
               </ListItemText>
 
               {matches && (
                 <ListItemText sx={{ width: "200px" }}>
                   {" "}
-                  <strong>Email </strong>
+                  <strong>Product </strong>
                 </ListItemText>
               )}
               {matches && (
                 <ListItemText sx={{ width: "200px" }}>
                   {" "}
-                  <strong>Phone No </strong>
+                  <strong>Status </strong>
                 </ListItemText>
               )}
               <span sx={{ width: matches ? "200px" : "20%" }}>
@@ -251,7 +203,7 @@ const DeletedPartner = ({ partners, isLoading }) => {
               </span>
             </ListItem>
           </Container>
-        )}{" "}
+        )}
         <List
           sx={{
             width: "100%",
@@ -261,8 +213,8 @@ const DeletedPartner = ({ partners, isLoading }) => {
           }}
         >
           {filteredData &&
-            filteredData.map((partner) => (
-              <Container key={partner?._id}>
+            filteredData.map((trip) => (
+              <Container key={trip?._id}>
                 <ListItem>
                   <ListItemText sx={{ width: matches ? "300px" : "80%" }}>
                     {matches && (
@@ -274,44 +226,40 @@ const DeletedPartner = ({ partners, isLoading }) => {
                               color: "error",
                             },
                           }}
-                          checked={checked(partner)}
-                          onChange={() => handleSelectedTruck(partner)}
+                          checked={checked(trip)}
+                          onChange={() => handleSelectedTruck(trip)}
                           inputProps={{ "aria-label": "controlled" }}
-                        />
-                        <Avatar
-                          alt="avatar"
-                          src={partner?.imageUrl?.link || Image}
                         />
                       </ListItemAvatar>
                     )}
-                    {getTitle(partner)}
+                    {trip?.requestId || "N/A"}
                   </ListItemText>
 
                   {matches && (
                     <ListItemText sx={{ width: "200px" }}>
-                      {partner?.email}
+                      {trip?.productName || "N/A"}
                     </ListItemText>
                   )}
                   {matches && (
                     <ListItemText sx={{ width: "200px" }}>
-                      {partner.phoneNo}
+                      {trip?.status || "N/A"}
                     </ListItemText>
                   )}
 
                   <OverlayTrigger
-                    show={chosenPartner?._id === partner._id}
+                    show={chosenTrip?._id === trip._id}
                     placement="bottom"
                     overlay={popover}
                   >
                     <Avatar variant="rounded" className="btn">
-                      {chosenPartner?._id === partner._id ? (
+                      {chosenTrip?._id === trip._id ? (
                         <ExpandLessIcon
-                          onClick={() => setChosenPartner()}
+                          onClick={() => setChosenTrip()}
                           color="error"
                         />
                       ) : (
                         <ExpandMoreIcon
-                          onClick={() => setChosenPartner(partner)}
+                          onClick={() => setChosenTrip(trip)}
                           color="error"
                         />
                       )}
@@ -336,15 +284,33 @@ const DeletedPartner = ({ partners, isLoading }) => {
         >
           <DialogTitle className="text-primary d-flex">
             {" "}
-            <Avatar
-              alt="avatar"
-              src={detail?.imageUrl?.link || Image}
-              className="me-3"
-            />{" "}
-            {getTitle(detail)}
+            Trip ID : {detail?.requestId || "N/A"}
           </DialogTitle>
-          <DialogContent>
-            <PartnerContactInfo partner={detail} />
+          <DialogContent className="d-flex justify-content-center partnerAccordionDetails p-2">
+            <Span className="d-flex justify-content-center w-100 mt-3">
+              {detail && <TripInfo trip={detail} expandChild={expandChild} />}
+              {matches && (
+                <ListItemAvatar className="ms-2">
+                  <Avatar>
+                    {expandChild === "contactInfo" ? (
+                      <UnfoldLessDoubleIcon
+                        color="primary"
+                        onClick={() => setExpandChild("")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    ) : (
+                      <FitScreenIcon
+                        color="primary"
+                        onClick={() => setExpandChild("contactInfo")}
+                        fontSize="small"
+                        style={{ cursor: "pointer" }}
+                      />
+                    )}
+                  </Avatar>
+                </ListItemAvatar>
+              )}
+            </Span>
           </DialogContent>
           <DialogActions>
             <Button
@@ -361,4 +327,4 @@ const DeletedPartner = ({ partners, isLoading }) => {
   );
 };
 
-export default DeletedPartner;
+export default DeletedTrip;

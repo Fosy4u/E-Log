@@ -1,17 +1,9 @@
-import {
-  Box,
-  Chip,
-  IconButton,
-  Menu,
-  MenuItem,
-
-  Stack,
-} from "@mui/material";
+import { Box, Chip, IconButton, Menu, MenuItem, Stack } from "@mui/material";
 import React, { useState } from "react";
 
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { useNavigate, useParams } from "react-router-dom";
-import RestoreAndDeleteTripModal from "./RestoreAndDeleteTripPartnerModal";
+import RestoreAndDeleteTripModal from "./RestoreAndDeleteTripModal";
 
 const TripActionButtons = ({ trip }) => {
   const { organisationId } = useParams();
@@ -30,15 +22,18 @@ const TripActionButtons = ({ trip }) => {
 
   const mobileMenuId = "primary-search-account-menu-mobile";
 
-const navigateToTrip = () => {
+  const navigateToTrip = () => {
     navigate(`/e-log/${organisationId}/trips/${trip._id}/edit`);
   };
-  
+
   const actions = (
     <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
       <RestoreAndDeleteTripModal
         selectedTrip={[trip] || []}
         mode="delete"
+        callBack={() => {
+          navigate(`/e-log/${organisationId}/trips`);
+        }}
       />
 
       <Chip
@@ -60,18 +55,6 @@ const navigateToTrip = () => {
         variant="outlined"
         style={{ width: "6rem" }}
       />
-      {!trip?.portalStatus && (
-        <Chip
-          color="primary"
-          className="btn"
-          // onClick={() => deselectAll()}
-          label={"Invite to Portal"}
-          size="small"
-          variant="outlined"
-          style={{ width: "7rem" }}
-        />
-      )}
-    
     </Stack>
   );
 

@@ -15,40 +15,42 @@ import FeedIcon from "@mui/icons-material/Feed";
 import { Span } from "../../../components/Typography";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
 import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
-import VendorContactInfor from "./VendorContactInfo";
+
 import { Transition } from "../../../utils/transition";
 import CloseIcon from "@mui/icons-material/Close";
-import AddEditVendorAgent from "./AddEditVendorAgent";
+
 import { useSelector } from "react-redux";
 import { globalSelectors } from "../../../global/global.slice";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import organisationsApi from "../../../services/organisationsApi.slice";
-import RestoreAndDeleteVendorModal from "./RestoreAndDeleteVendorModal";
-import { getTitle } from "../../../utils/getTitle";
+import Loader from "../../../utils/Loader";
 
-const ActionButtons = ({ selectedRows }) => {
+import RestoreAndDeleteTripModal from "./RestoreAndDeleteTripModal";
+import TripInfo from "./TripInfo";
+
+const TripTableActionButtons = ({ selectedRows }) => {
   const matches = useMediaQuery("(min-width:600px)");
+  const navigate = useNavigate();
   const [expandChild, setExpandChild] = useState();
-  const [showEditModal, setShowEditModal] = useState(false);
   const [open, setOpen] = useState(false);
-  const vendor = selectedRows?.length === 1 ? selectedRows[0] : null;
+  const trip = selectedRows?.length === 1 ? selectedRows[0] : null;
 
   const { organisationId } = useParams();
   const token = useSelector(globalSelectors.selectAuthToken);
-  const vendorQuery = organisationsApi.useGetVendorQuery(
+  const tripQuery = organisationsApi.useGetTripQuery(
     {
-      vendorAgentId: vendor?.key?.value,
+      _id: trip?.key?.value,
       organisationId,
     },
-    { skip: !token || !organisationId || !vendor?.key?.value }
+    { skip: !token || !organisationId || !trip?.key?.value }
   );
-  const vendorAgent = vendorQuery?.data?.data;
+  const currentTrip = tripQuery?.data?.data;
   return (
     <>
-
+      <Loader showLoading={tripQuery?.isLoading} />
       <ButtonGroup>
         {selectedRows?.length === 1 && (
-          <Tooltip title="Details">
+          <Tooltip title="Trip Info">
             <IconButton onClick={() => setOpen(true)}>
               <FeedIcon />
             </IconButton>
@@ -56,16 +58,23 @@ const ActionButtons = ({ selectedRows }) => {
         )}
         {selectedRows?.length === 1 && (
           <Tooltip title="Edit">
-            <IconButton onClick={() => setShowEditModal(true)}>
+            <IconButton
+              onClick={() =>
+                navigate(
+                  `/e-log/${organisationId}/trips/${trip?.key?.value}/edit`
+                )
+              }
+            >
               <EditIcon />
             </IconButton>
           </Tooltip>
         )}
 
-        <RestoreAndDeleteVendorModal
-          selectedVendor={selectedRows || []}
+        <RestoreAndDeleteTripModal
+          selectedTrip={selectedRows || []}
           mode="delete"
           icon
+          tableDelete
         />
       </ButtonGroup>
 
@@ -82,18 +91,15 @@ const ActionButtons = ({ selectedRows }) => {
           id="alert-dialog-title"
           className="d-flex justify-content-between"
         >
-          <Span>{getTitle(vendorAgent)}</Span>
+          <Span>{`Trip ID : ${currentTrip?.requestId}`}</Span>
           <IconButton onClick={() => setOpen(false)}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent className="d-flex justify-content-center partnerAccordionDetails">
           <Span className="d-flex justify-content-center w-100 mt-3">
-            {vendorAgent && (
-              <VendorContactInfor
-                vendor={vendorAgent}
-                expandChild={expandChild}
-              />
+            {currentTrip && (
+              <TripInfo trip={currentTrip} expandChild={expandChild} />
             )}
             {matches && (
               <ListItemAvatar className="ms-2">
@@ -119,16 +125,8 @@ const ActionButtons = ({ selectedRows }) => {
           </Span>
         </DialogContent>
       </Dialog>
-      {vendorAgent && (
-        <AddEditVendorAgent
-          showModal={showEditModal}
-          setShowModal={setShowEditModal}
-          mode="edit"
-          vendorAgent={vendorAgent}
-        />
-      )}
     </>
   );
 };
 
-export default ActionButtons;
+export default TripTableActionButtons;

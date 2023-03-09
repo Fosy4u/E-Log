@@ -1,15 +1,14 @@
 import React from "react";
-import { Avatar, Button, Card } from "@mui/material";
+import {  Button, Card } from "@mui/material";
 import { styled } from "@mui/system";
 import TripAccordion from "./TripAccordion";
 import TripActionButtons from "./TripActionButtons";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { globalSelectors } from "../../../global/global.slice";
 import organisationsApi from "../../../services/organisationsApi.slice";
-import { getTitle } from "../../../utils/getTitle";
 import Loader from "../../../utils/Loader";
-import TripTimeLine from "./TripTimeLine";
+import TripStatusActions from "./TripStatusActions";
 import { getTripStatusColor } from "../../../utils/utils";
 
 const CardRoot = styled(Card)(({ bgcolor }) => ({
@@ -27,7 +26,7 @@ const CardTitle = styled("div")(({ subtitle }) => ({
 
 const TripCard = ({ trip }) => {
   console.log("trip", trip);
-  const { tripId, organisationId } = useParams();
+  const {  organisationId } = useParams();
 
   const token = useSelector(globalSelectors.selectAuthToken);
 
@@ -67,7 +66,7 @@ const TripCard = ({ trip }) => {
 
         <TripActionButtons trip={trip} />
       </span>
-      <TripTimeLine timeLine={trip?.timeline} />
+      <TripStatusActions trip={trip} />
       <TripAccordion trip={trip} customer={customer} vendor={vendor} />
     </CardRoot>
   );

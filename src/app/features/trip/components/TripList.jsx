@@ -10,11 +10,7 @@ const TripList = ({ filteredData }) => {
           overflow: "scroll",
         }}
       >
-        {/* {filteredData?.map((trip) => (
-          <div key={trip._id}>
-            <TripCard trip={trip} />
-          </div>
-        ))} */}
+       
         {filteredData?.length > 0 && <TripTable allTrips={filteredData} />}
       </div>
     </div>

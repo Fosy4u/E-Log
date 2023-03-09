@@ -1,5 +1,5 @@
 import { forwardRef, useState } from "react";
-import { Col,  Row,  } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Button,
@@ -9,10 +9,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   Slide,
+  Tooltip,
 } from "@mui/material";
 import organisationsApi from "../../../services/organisationsApi.slice";
 import Loader from "../../../utils/Loader";
+import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { globalSelectors } from "../../../global/global.slice";
 
@@ -22,11 +25,12 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const RestoreAndDeleteTripModal = ({
   selectedTrip,
-  setSelectedTrip,
   icon,
   callBack,
   mode,
+  tableDelete,
 }) => {
+  const { organisationId } = useParams();
   const currentUser = useSelector(globalSelectors.selectCurrentUser);
   const [showModal, setShowModal] = useState(false);
   const [deleteTrip, deleteTripStatus] =
@@ -36,8 +40,9 @@ const RestoreAndDeleteTripModal = ({
 
   const getPayload = (value) => {
     return selectedTrip.reduce((acc, item) => {
-      if (item[value]) {
-        acc.push(item[value]);
+      const keyVal = item[value]?.value || item[value];
+      if (keyVal) {
+        acc.push(keyVal);
       }
 
       return acc;
@@ -46,7 +51,8 @@ const RestoreAndDeleteTripModal = ({
 
   const handleDeleteRestore = () => {
     const payload = {
-      ids: getPayload("_id"),
+      ids: getPayload(tableDelete ? "key" : "_id"),
+      organisationId,
       userId: currentUser?._id,
     };
     if (mode === "delete") {
@@ -58,7 +64,6 @@ const RestoreAndDeleteTripModal = ({
           if (data?.data?.data) {
             setShowModal(false);
             callBack();
-            setSelectedTrip([]);
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -73,7 +78,7 @@ const RestoreAndDeleteTripModal = ({
         .then((data) => {
           if (data?.data?.data) {
             setShowModal(false);
-            setSelectedTrip([]);
+            callBack();
           }
         })
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -83,10 +88,15 @@ const RestoreAndDeleteTripModal = ({
     }
   };
 
-  const getTitle = () => {
-    if (selectedTrip[0]?.companyName) return selectedTrip[0].companyName;
+  const getTitle = (item) => {
+    if (mode === "delete") {
+      return item?.contactName?.value || item?.contactName;
+    }
 
-    return `${selectedTrip[0]?.firstName} ${selectedTrip[0]?.lastName}`;
+    if (item?.companyName) return item.companyName;
+    if (item?.firstName && item?.lastName)
+      return `${item?.firstName} ${item?.lastName}`;
+    return "trip";
   };
 
   return (
@@ -95,11 +105,17 @@ const RestoreAndDeleteTripModal = ({
         {selectedTrip.length > 0 && (
           <>
             {icon ? (
-              <DeleteIcon
-                onClick={
-                  selectedTrip?.length > 0 ? () => setShowModal(true) : null
-                }
-              />
+              mode === "delete" && (
+                <Tooltip title="Delete">
+                  <IconButton
+                    onClick={
+                      selectedTrip?.length > 0 ? () => setShowModal(true) : null
+                    }
+                  >
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </Tooltip>
+              )
             ) : (
               <Chip
                 color="error"
@@ -129,36 +145,33 @@ const RestoreAndDeleteTripModal = ({
                 {mode === "delete" ? "Delete Trip" : "Restore Trip"}
               </DialogTitle>
               <DialogContent>
-                <DialogContentText>
-                  {selectedTrip.length === 1 && (
-                    <span>
-                      You want to {mode === "delete" ? "delete " : "restore "}
-                      <strong>{getTitle()}</strong>
-                    </span>
-                  )}
-                  {selectedTrip.length > 1 && (
-                    <span>
-                      You have seleceted following
-                      <strong>
-                        {" "}
-                        {`${selectedTrip?.length}  Trips 
+                {selectedTrip.length === 1 && (
+                  <span>
+                    You want to {mode === "delete" ? "delete " : "restore "}
+                    <strong>{getTitle(selectedTrip[0])}</strong>
+                  </span>
+                )}
+                {selectedTrip.length > 1 && (
+                  <span>
+                    You have seleceted following
+                    <strong>
+                      {" "}
+                      {`${selectedTrip?.length}  trips 
             
              `}{" "}
-                      </strong>{" "}
-                      for {mode === "delete" ? "deletion " : "restoration "}
-                      <ul>
-                        {selectedTrip.map((item) => (
-                          <li key={item._id}>{getTitle()}</li>
-                        ))}
-                      </ul>
-                    </span>
-                  )}
-                </DialogContentText>
+                    </strong>{" "}
+                    for {mode === "delete" ? "deletion " : "restoration "}
+                    <ul>
+                      {selectedTrip.map((item, index) => (
+                        <li key={index}>{getTitle(item)}</li>
+                      ))}
+                    </ul>
+                  </span>
+                )}
 
                 <Loader
                   showLoading={
-                    deleteTripStatus?.isLoading ||
-                    restoreTripStatus?.isLoading
+                    deleteTripStatus?.isLoading || restoreTripStatus?.isLoading
                   }
                 />
               </DialogContent>

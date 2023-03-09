@@ -6,15 +6,16 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import TripCustomerInfo from "./TripCustomerInfo";
-import PartnerTruckList from "./PartnerTruckList";
-import PartnerRemarks from "./PartnerRemarks";
-import PartnerTimelineList from "./PartnerTimelineList";
 import { useParams } from "react-router-dom";
 import { Avatar, ListItemAvatar, useMediaQuery } from "@mui/material";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
 import UnfoldLessDoubleIcon from "@mui/icons-material/UnfoldLessDouble";
 import TripInfo from "./TripInfo";
 import VendorContactInfor from "../../vendorAgent/components/VendorContactInfo";
+import AssignTripTruck from "./AssignTripTruck";
+import TripRemarks from "./TripRemarks";
+import TripTimelineList from "./TripTimelineList";
+import TripWaybill from "./TripWaybill";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -203,10 +204,7 @@ export default function TripAccordion({ trip, customer, vendor }) {
         </AccordionSummary>
         <AccordionDetails className="partnerAccordionDetails">
           <span className="d-flex justify-content-center">
-            <PartnerTruckList
-              tripId={trip?._id}
-              expandChild={expandChild === "truck" ? true : false}
-            />
+            <AssignTripTruck trip={trip} />
             {matches && (
               <ListItemAvatar className="ms-2">
                 <Avatar>
@@ -232,6 +230,42 @@ export default function TripAccordion({ trip, customer, vendor }) {
         </AccordionDetails>
       </Accordion>
       <Accordion
+        expanded={expanded === "requestWaybill"}
+        onChange={handleChange("requestWaybill")}
+      >
+        <AccordionSummary aria-controls="panel4d-content" id="panel4d-header">
+          <Typography>Request Waybill</Typography>
+        </AccordionSummary>
+        <AccordionDetails className="partnerAccordionDetails ">
+          <span className="d-flex justify-content-center">
+            <TripWaybill
+              title={"Request Waybill"}
+              image={trip?.requestedWaybilImageUrl?.link}
+              field="requestedWaybilImageUrl"
+              tripId = {trip._id}
+            />
+          </span>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
+        expanded={expanded === "deliveredWaybill"}
+        onChange={handleChange("deliveredWaybill")}
+      >
+        <AccordionSummary aria-controls="panel4d-content" id="panel4d-header">
+          <Typography>Delivered Waybill</Typography>
+        </AccordionSummary>
+        <AccordionDetails className="partnerAccordionDetails ">
+          <span className="d-flex justify-content-center">
+            <TripWaybill
+              title={"Delivered Waybill"}
+              image={trip?.deliveredWaybilImageUrl?.link}
+              field="deliveredWaybilImageUrl"
+              tripId = {trip._id}
+            />
+          </span>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion
         expanded={expanded === "remarks"}
         onChange={handleChange("remarks")}
       >
@@ -240,7 +274,7 @@ export default function TripAccordion({ trip, customer, vendor }) {
         </AccordionSummary>
         <AccordionDetails className="partnerAccordionDetails ">
           <span className="d-flex justify-content-center">
-            <PartnerRemarks trip={trip} />
+            <TripRemarks trip={trip} />
           </span>
         </AccordionDetails>
       </Accordion>
@@ -255,7 +289,7 @@ export default function TripAccordion({ trip, customer, vendor }) {
           className=" d-flex justify-content-center"
           style={{ backgroundColor: "#222A45" }}
         >
-          <PartnerTimelineList trip={trip} />
+          <TripTimelineList trip={trip} />
         </AccordionDetails>
       </Accordion>
     </div>

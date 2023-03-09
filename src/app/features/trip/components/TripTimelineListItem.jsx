@@ -17,7 +17,7 @@ import { pink } from "@mui/material/colors";
 import CreditScoreIcon from "@mui/icons-material/CreditScore";
 import displayDate from "../../../utils/displayDate";
 
-export default function PartnerTimelineListItem({ log, index }) {
+export default function TripTimelineListItem({ log, index }) {
   const ref = useRef();
   const checked = ref?.current?.focus();
   return (
@@ -159,7 +159,7 @@ export default function PartnerTimelineListItem({ log, index }) {
             </TimelineContent>
           </TimelineItem>
         )}
-        {log?.action === "stamp" && (
+        {log?.action === "action" && (
           <TimelineItem>
             <TimelineOppositeContent
               sx={{ m: "auto 0" }}
@@ -181,7 +181,7 @@ export default function PartnerTimelineListItem({ log, index }) {
               className="d-flex flex-column"
             >
               <Typography variant="h6" component="span">
-                {log?.action || "stamp"}
+                {log?.action || "action"}
               </Typography>
               <Typography variant="p" style={{ fontSize: "10px" }}>
                 <strong className="text-primary">staff :</strong>{" "}
@@ -194,7 +194,7 @@ export default function PartnerTimelineListItem({ log, index }) {
               </Typography>
               <Typography variant="p" style={{ fontSize: "10px" }}>
                 <strong className="text-primary">Details :</strong>{" "}
-                {log?.details || `stamped as sent`}
+                {log?.details || `permformed ${log?.action}`}
               </Typography>
             </TimelineContent>
           </TimelineItem>

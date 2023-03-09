@@ -9,25 +9,14 @@ import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact
 export const navigations = [
   { name: "Dashboard", path: `/dashboard`, icon: "dashboard" },
   { label: "OPERATIONS", type: "label" },
-  {
-    name: "Job Requests",
-    icon: "work",
-    children: [
-      { name: "Request List", iconText: "RL", path: "/request" },
-      { name: "Add Request", iconText: "AR", path: "/request/add" },
-    ],
-  },
+
   {
     name: "Trips",
     icon: "commute",
     children: [
       { name: "Trip List", iconText: "T", path: "/trips" },
-      { name: "Completed Trip", iconText: "CT", path: "/trip/completed" },
-      {
-        name: "Awaiting Payments",
-        iconText: "AP",
-        path: "/trip/awaitingPayments",
-      },
+
+      { name: "Deleted Trips", iconText: "DP", path: "/trips/Deleted" },
     ],
   },
   { label: "Logistics Components", type: "label" },
@@ -69,6 +58,7 @@ export const navigations = [
     iconComponent: <InventoryIcon />,
     children: [
       { name: "All Vendors", iconText: "TL", path: "/vendors/" },
+      { name: "Trip Providers", iconText: "TL", path: "/vendors/" },
       { name: "Deleted Vendors", iconText: "AT", path: "/vendors/deleted" },
     ],
   },
@@ -104,6 +94,6 @@ export const navigations = [
     name: "Documentation",
     icon: "launch",
     type: "extLink",
-    path: "http://demos.ui-lib.com/matx-react-doc/",
+    path: "https://www.nemfra.com/",
   },
 ];

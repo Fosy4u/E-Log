@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import organisationsApi from "../../../services/organisationsApi.slice";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import EditIcon from "@mui/icons-material/Edit";
-import DeletePartnerRemarkModal from "./DeletePartnerRemarkModal";
+import DeleteTripRemarkModal from "./DeleteTripRemarkModal";
 import { globalSelectors } from "../../../global/global.slice";
 import displayDate from "../../../utils/displayDate";
 import Loader from "../../../utils/Loader";
 
-const PartnerRemarks = ({ partner, isLoading }) => {
+const TripRemarks = ({ trip, isLoading }) => {
   const user = useSelector(globalSelectors.selectCurrentUser);
   const token = useSelector(globalSelectors.selectAuthToken);
   const matches = useMediaQuery("(min-width:600px)");
@@ -21,19 +21,19 @@ const PartnerRemarks = ({ partner, isLoading }) => {
   const [show, setShow] = useState(false);
 
   const [enableEdit, setEnableEdit] = useState();
-  const getPartnerRemarksQuery = organisationsApi.useGetPartnerRemarkQuery(
+  const getTripRemarksQuery = organisationsApi.useGetTripRemarkQuery(
     {
-      _id: partner?._id,
+      _id: trip?._id,
     },
-    { skip: !partner?._id || !token }
+    { skip: !trip?._id || !token }
   );
-  const remarks = getPartnerRemarksQuery?.data?.data;
+  const remarks = getTripRemarksQuery?.data?.data;
 
   const [addRemark, addRemarkStatus] =
-    organisationsApi.useAddPartnerRemarkMutation();
+    organisationsApi.useAddTripRemarkMutation();
 
-  const [editPartnerRemark, editPartnerRemarkStatus] =
-    organisationsApi.useEditPartnerRemarkMutation();
+  const [editTripRemark, editTripRemarkStatus] =
+    organisationsApi.useEditTripRemarkMutation();
 
 
   const handleAdd = () => {
@@ -42,7 +42,7 @@ const PartnerRemarks = ({ partner, isLoading }) => {
         remark,
         userId: user?._id,
       },
-      _id: partner._id,
+      _id: trip._id,
     };
     addRemark({
       payload,
@@ -59,13 +59,13 @@ const PartnerRemarks = ({ partner, isLoading }) => {
   const handleEditCick = async () => {
     const payload = {
       userId: user?._id,
-      partnerId: partner._id,
+      tripId: trip._id,
       remarkId,
       remark: editedRemark,
     };
 
     try {
-      await editPartnerRemark({
+      await editTripRemark({
         payload,
       });
       setEnableEdit();
@@ -87,8 +87,8 @@ const PartnerRemarks = ({ partner, isLoading }) => {
       <Loader
         showLoading={
           addRemarkStatus?.isLoading ||
-          getPartnerRemarksQuery?.isLoading ||
-          editPartnerRemarkStatus?.isLoading
+          getTripRemarksQuery?.isLoading ||
+          editTripRemarkStatus?.isLoading
         }
       />
       <TextField
@@ -192,7 +192,7 @@ const PartnerRemarks = ({ partner, isLoading }) => {
                         <Button
                           disabled={
                             !editedRemark ||
-                            editPartnerRemarkStatus.isLoading ||
+                            editTripRemarkStatus.isLoading ||
                             editedRemark === comment?.remark
                           }
                           size="small"
@@ -236,11 +236,11 @@ const PartnerRemarks = ({ partner, isLoading }) => {
             </Alert>
           </div>
         ))}
-      <DeletePartnerRemarkModal
+      <DeleteTripRemarkModal
         show={show}
         setShow={setShow}
         callback={() => setShow(false)}
-        partnerId={partner?._id}
+        tripId={trip?._id}
         remarkId={remarkId}
         user={remarkUser}
         editedRemark={editedRemark}
@@ -249,4 +249,4 @@ const PartnerRemarks = ({ partner, isLoading }) => {
   );
 };
 
-export default PartnerRemarks;
+export default TripRemarks;

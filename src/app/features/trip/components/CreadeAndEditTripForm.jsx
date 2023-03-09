@@ -47,7 +47,7 @@ const CreadeAndEditTripForm = forwardRef(
     const [openTruckTypeSelect, setOpenTruckTypeSelect] = useState(false);
     const [isVendorRequested, setIsVendorRequested] = useState(true);
     const [customerId, setCustomerId] = useState();
-    console.log("🚀  customerId:", customerId)
+    console.log("🚀  customerId:", customerId);
     const [vendorId, setVendorId] = useState();
     const [truckType, setTruckType] = useState();
     const [productName, setProductName] = useState();
@@ -103,7 +103,6 @@ const CreadeAndEditTripForm = forwardRef(
 
     useEffect(() => {
       if (trip) {
-        
         setCustomerId(trip?.customerId);
         setVendorId(trip?.vendorId);
         setTruckType(trip?.truckType);
@@ -230,9 +229,10 @@ const CreadeAndEditTripForm = forwardRef(
         payload,
       })
         .unwrap()
-        .then(() => {
+        .then((data) => {
           resetStates();
-          callback();
+
+          navigate(`/e-log/${organisationId}/trips/${data?.data?._id}`);
         })
         .catch((e) => {
           console.error(e.response);
@@ -479,7 +479,7 @@ const CreadeAndEditTripForm = forwardRef(
                         margin="normal"
                         size="small"
                         fullWidth
-                        label="Trip Price"
+                        label="Trip Amount"
                         type="number"
                         value={price || ""}
                         onChange={(e) => setPrice(e.target.value)}

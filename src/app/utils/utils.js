@@ -175,13 +175,23 @@ export const flat = (array) => {
 };
 
 export const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
-export  const getTripStatusColor = (status) => {
-  switch (status) {
+export const getTripStatusColor = (status) => {
+ 
+  switch (status.toLowerCase()) {
     case "pending":
       return "info";
+    case "en route":
+      return "secondary";
+    case "at destination":
+      return "error";
+    case "loaded":
+      return "warning";
+    case "delivered":
+      return "success";
+    
 
     default:
       return "secondary";

@@ -6,11 +6,11 @@ import { globalSelectors } from '../../../global/global.slice';
 import organisationsApi from '../../../services/organisationsApi.slice';
 import ConfirmationModal from "../../../utils/ConfirmationModal";
 
-const DeletePartnerRemarkModal = ({
+const DeleteTripRemarkModal = ({
   show,
   setShow,
   callback,
-  partnerId,
+  tripId,
   remarkId,
   user,
 }) => {
@@ -24,15 +24,15 @@ const DeletePartnerRemarkModal = ({
     return setShow(false);
   }, [show, setShow]);
 
-  const [deletePartnerRemark, deleteContactRemarkStatus] =
-    organisationsApi.useDeletePartnerRemarkMutation();
+  const [deleteTripRemark, deleteContactRemarkStatus] =
+    organisationsApi.useDeleteTripRemarkMutation();
   const deleteError = deleteContactRemarkStatus?.error;
 
   const handleDeleteCick = async () => {
-    const payload = { userId: currentUser?._id, partnerId, remarkId };
+    const payload = { userId: currentUser?._id, tripId, remarkId };
 
     try {
-      await deletePartnerRemark({
+      await deleteTripRemark({
         payload,
       });
 
@@ -73,4 +73,4 @@ const DeletePartnerRemarkModal = ({
   );
 };
 
-export default DeletePartnerRemarkModal;
+export default DeleteTripRemarkModal;

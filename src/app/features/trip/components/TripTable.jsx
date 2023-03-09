@@ -1,9 +1,8 @@
 import { Button } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { Small } from "../../../components/Typography";
 import EnhancedTable from "../../../utils/Table/EnhancedTable";
 import { getTripStatusColor } from "../../../utils/utils";
-// import ActionButtons from "./ActionButtons";
+import TripTableActionButtons from "./TripTableActionButtons";
 
 const headCells = [
   {
@@ -29,6 +28,13 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Max Load",
+  },
+  {
+    id: "amount",
+    numeric: true,
+    numberWithCommas: true,
+    disablePadding: false,
+    label: "Amount",
   },
   {
     id: "details",
@@ -79,12 +85,13 @@ const TripTable = ({ allTrips }) => {
     const rows = [];
     allTrips.map((trip) => {
       const row = {
-        key: trip._id,
-        tripId: getRequestId(trip),
-        status: getStatus(trip) || "N/P",
-        product: trip.productName || "N/P",
-        maxLoad: trip.maxLoad || "N/P",
-        details: getDetails(trip) || "N/P",
+        key: { value: trip._id, noFilter: true },
+        tripId: { value: getRequestId(trip) },
+        status: { value: getStatus(trip) || "N/P" },
+        product: { value: trip.productName || "N/P" },
+        maxLoad: { value: trip.maxLoad || "N/P" },
+        amount: { value: trip.price || "N/P" },
+        details: { value: getDetails(trip) || "N/P", noFilter: true },
       };
 
       rows.push(row);
@@ -97,7 +104,7 @@ const TripTable = ({ allTrips }) => {
       <div style={{ flexGrow: 1, textAlign: "center" }}>
         <EnhancedTable
           title="Trips"
-          // ActionButtons={ActionButtons}
+          ActionButtons={TripTableActionButtons}
           headCells={headCells}
           rows={getRowData()}
           stickyHeader

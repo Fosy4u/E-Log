@@ -22,12 +22,13 @@ export default function FilterConditions({
     const arr = rows.reduce((acc, row) => {
       const keys = Object.keys(row);
       keys.forEach((key) => {
-        if (!acc.includes(key) && key !== "key" && !row?.noFilter) {
+        if (!acc.includes(key)  && !row[key]?.noFilter) {
           acc.push(key);
         }
       });
       return acc;
     }, []);
+
     setFields(arr);
     // setSelectedFields(
     //   arr.map((field) => ({ field, condition: "", value: "" }))

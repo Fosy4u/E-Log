@@ -8,8 +8,6 @@ import {
 } from "@mui/material";
 
 const FilterItem = ({ fields, handleChange, item, index, selectedFields }) => {
-console.log("🚀 ~ file: FilterItem.jsx:11 ~ FilterItem ~ item:", item)
-
   const [fieldValue, setFieldValue] = useState();
   const [conditionValue, setConditionValue] = useState("");
   const [value, setValue] = useState("");
@@ -22,7 +20,6 @@ console.log("🚀 ~ file: FilterItem.jsx:11 ~ FilterItem ~ item:", item)
     }
   }, [fields, item]);
 
-
   const validateFieldItem = (menuItem) => {
     let valid = true;
     const find = selectedFields.find((f) => f.field === menuItem);
@@ -33,7 +30,6 @@ console.log("🚀 ~ file: FilterItem.jsx:11 ~ FilterItem ~ item:", item)
   };
 
   const handleFieldChange = (event) => {
-
     setFieldValue(event.target.value);
     const newItem = {
       field: event.target.value,
@@ -98,21 +94,22 @@ console.log("🚀 ~ file: FilterItem.jsx:11 ~ FilterItem ~ item:", item)
                 Equals (=)
               </MenuItem>
             )}
-             {typeof fieldValue !== "number" && (
-            <MenuItem name={fieldValue} value="contains">
-              Contains (text)
-            </MenuItem>
+            {typeof fieldValue !== "number" && (
+              <MenuItem name={fieldValue} value="contains">
+                Contains (text)
+              </MenuItem>
             )}
-          
-            {typeof fieldValue === "number" && ( <MenuItem name={fieldValue} value="greaterThan">
-              Greater (&gt;)
-            </MenuItem>
+
+            {typeof fieldValue === "number" && (
+              <MenuItem name={fieldValue} value="greaterThan">
+                Greater (&gt;)
+              </MenuItem>
             )}
-             {typeof fieldValue === "number" && (
-            <MenuItem name={fieldValue} value="lessThan">
-              Less (&lt;)
-            </MenuItem>
-              )}
+            {typeof fieldValue === "number" && (
+              <MenuItem name={fieldValue} value="lessThan">
+                Less (&lt;)
+              </MenuItem>
+            )}
           </Select>
         </FormControl>
       )}

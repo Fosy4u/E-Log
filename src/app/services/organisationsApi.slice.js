@@ -13,7 +13,7 @@ export default createApi({
     "Trucks",
     "Drivers",
     "Partners",
-    "Trips"
+    "Trips",
   ],
   endpoints: (builder) => ({
     getOrganisation: builder.query({
@@ -148,6 +148,19 @@ export default createApi({
         };
       },
       providesTags: ["Organisations", "Users", "Trucks", "Drivers"],
+      onQueryStarted: async (_, queryArgs) => {
+        responseHandler({}, queryArgs);
+      },
+    }),
+    getAvailableTrucks: builder.query({
+      query: (arg) => {
+        const { organisationId } = arg;
+        return {
+          url: `/trucks/available`,
+          params: { organisationId },
+        };
+      },
+      providesTags: ["Organisations",  "Trucks", "Drivers", "Trips"],
       onQueryStarted: async (_, queryArgs) => {
         responseHandler({}, queryArgs);
       },
@@ -907,10 +920,10 @@ export default createApi({
     }),
     getVendor: builder.query({
       query: (arg) => {
-        const {  organisationId, vendorAgentId } = arg;
+        const { organisationId, vendorAgentId } = arg;
         return {
           url: `vendorAgent/`,
-          params: {  organisationId, vendorAgentId },
+          params: { organisationId, vendorAgentId },
         };
       },
       providesTags: ["VendorAgents"],
@@ -1074,10 +1087,10 @@ export default createApi({
     }),
     getTrip: builder.query({
       query: (arg) => {
-        const {  organisationId, _id, } = arg;
+        const { organisationId, _id } = arg;
         return {
           url: `trip/`,
-          params: {  organisationId, _id, },
+          params: { organisationId, _id },
         };
       },
       providesTags: ["Trips"],
@@ -1098,6 +1111,19 @@ export default createApi({
         responseHandler({}, queryArgs);
       },
     }),
+    getTripLogs: builder.query({
+      query: (arg) => {
+        const { _id } = arg;
+        return {
+          url: `trip/logs/`,
+          params: { _id },
+        };
+      },
+      providesTags: ["Trips"],
+      onQueryStarted: async (_, queryArgs) => {
+        responseHandler({}, queryArgs);
+      },
+    }),
 
     editTrip: builder.mutation({
       query: ({ payload }) => ({
@@ -1110,6 +1136,42 @@ export default createApi({
         responseHandler(
           {
             success: "Trip Successfully Updated",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    UploadTripWaybill: builder.mutation({
+      query: ({ payload }) => ({
+        url: `/trip/waybil/upload`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Waybill Successfully Uploaded",
+            successHandler,
+            errorHandler,
+          },
+          queryArgs
+        );
+      },
+    }),
+    actionTrip: builder.mutation({
+      query: ({ payload }) => ({
+        url: `trip/action`,
+        method: "PUT",
+        body: payload,
+      }),
+      invalidatesTags: (result, error) => (error ? [] : ["Trips", "Trucks"]),
+      onQueryStarted: async ({ successHandler, errorHandler }, queryArgs) => {
+        responseHandler(
+          {
+            success: "Action on trip Successfully Updated",
             successHandler,
             errorHandler,
           },
@@ -1207,15 +1269,6 @@ export default createApi({
         );
       },
     }),
-
-
-
-
-
-
-
-
-
 
     createContact: builder.mutation({
       query: ({ payload }) => ({

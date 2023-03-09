@@ -1,6 +1,6 @@
 import * as React from "react";
 import Timeline from "@mui/lab/Timeline";
-import PartnerTimelineListItem from "./PartnerTimelineListItem";
+import TripTimelineListItem from "./TripTimelineListItem";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import { globalSelectors } from "../../../global/global.slice";
@@ -8,18 +8,18 @@ import organisationsApi from "../../../services/organisationsApi.slice";
 import Loader from "../../../utils/Loader";
 import { useMediaQuery } from "@mui/material";
 
-export default function PartnerTimelineList({ partner }) {
+export default function TripTimelineList({ trip }) {
   const token = useSelector(globalSelectors.selectAuthToken);
   const matches = useMediaQuery("(min-width:600px)");
-  const getPartnerLogsQuery = organisationsApi.useGetPartnerLogsQuery(
+  const getTripLogsQuery = organisationsApi.useGetTripLogsQuery(
     {
-      _id: partner?._id,
+      _id: trip?._id,
     },
-    { skip: !partner?._id || !token }
+    { skip: !trip?._id || !token }
   );
-  const logs = getPartnerLogsQuery?.data?.data;
+  const logs = getTripLogsQuery?.data?.data;
 
-  const loading = getPartnerLogsQuery?.isLoading;
+  const loading = getTripLogsQuery?.isLoading;
   return (
     <div
       className="bg-white"
@@ -37,7 +37,7 @@ export default function PartnerTimelineList({ partner }) {
           {logs?.length > 0 &&
             [...logs].map((log) => (
               <span key={log?._id}>
-                <PartnerTimelineListItem index={log?._id} log={log} />
+                <TripTimelineListItem index={log?._id} log={log} />
               </span>
             ))}
         </Timeline>

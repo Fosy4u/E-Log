@@ -21,7 +21,7 @@ import SignalWifiStatusbar4BarIcon from "@mui/icons-material/SignalWifiStatusbar
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
 import displayDate from "../../../utils/displayDate";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const TripInfo = ({ trip, expandChild }) => {
   const matches = useMediaQuery("(min-width:600px)");
@@ -63,7 +63,10 @@ const TripInfo = ({ trip, expandChild }) => {
         secondaryAction={
           matches && (
             <ListItemText
-              primary={displayDate(trip?.createdAt) || "not provided"}
+              primary={
+                (trip?.createdAt && displayDate(trip?.createdAt)) ||
+                "not provided"
+              }
             />
           )
         }
@@ -75,7 +78,10 @@ const TripInfo = ({ trip, expandChild }) => {
         </ListItemAvatar>
         <ListItemText
           primary="Created At"
-          secondary={getSecondaryActionText(displayDate(trip?.createdAt))}
+          secondary={
+            trip?.createdAt &&
+            getSecondaryActionText(displayDate(trip?.createdAt))
+          }
         />
       </ListItem>
       <ListItem
@@ -202,7 +208,10 @@ const TripInfo = ({ trip, expandChild }) => {
         secondaryAction={
           matches && (
             <ListItemText
-              primary={displayDay(trip?.pickupDate) || "not provided"}
+              primary={
+                (trip?.pickupDate && displayDay(trip?.pickupDate)) ||
+                "not provided"
+              }
             />
           )
         }
@@ -214,14 +223,21 @@ const TripInfo = ({ trip, expandChild }) => {
         </ListItemAvatar>
         <ListItemText
           primary="Pick-Up Date"
-          secondary={getSecondaryActionText(displayDay(trip?.pickupDate))}
+          secondary={
+            trip?.pickupDate &&
+            getSecondaryActionText(displayDay(trip?.pickupDate))
+          }
         />
       </ListItem>
       <ListItem
         secondaryAction={
           matches && (
             <ListItemText
-              primary={displayDay(trip?.estimatedDropOffDate) || "not provided"}
+              primary={
+                (trip?.estimatedDropOffDate &&
+                  displayDay(trip?.estimatedDropOffDate)) ||
+                "not provided"
+              }
             />
           )
         }
@@ -233,7 +249,7 @@ const TripInfo = ({ trip, expandChild }) => {
         </ListItemAvatar>
         <ListItemText
           primary="Estimated Delivery Date"
-          secondary={getSecondaryActionText(
+          secondary={trip?.estimatedDropOffDate && getSecondaryActionText(
             displayDay(trip?.estimatedDropOffDate)
           )}
         />
@@ -305,7 +321,10 @@ const TripInfo = ({ trip, expandChild }) => {
         secondaryAction={
           matches && (
             <ListItemText
-              primary={displayDate(trip?.updatedAt) || "not provided"}
+              primary={
+                (trip?.updatedAt && displayDate(trip?.updatedAt)) ||
+                "not provided"
+              }
             />
           )
         }
@@ -317,7 +336,10 @@ const TripInfo = ({ trip, expandChild }) => {
         </ListItemAvatar>
         <ListItemText
           primary="Last Updated"
-          secondary={getSecondaryActionText(displayDate(trip?.updatedAt))}
+          secondary={
+            trip?.updatedAt &&
+            getSecondaryActionText(displayDate(trip?.updatedAt))
+          }
         />
       </ListItem>
     </List>
