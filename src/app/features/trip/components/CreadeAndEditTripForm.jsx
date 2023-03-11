@@ -47,14 +47,13 @@ const CreadeAndEditTripForm = forwardRef(
     const [openTruckTypeSelect, setOpenTruckTypeSelect] = useState(false);
     const [isVendorRequested, setIsVendorRequested] = useState(true);
     const [customerId, setCustomerId] = useState();
-    console.log("🚀  customerId:", customerId);
     const [vendorId, setVendorId] = useState();
     const [truckType, setTruckType] = useState();
     const [productName, setProductName] = useState();
     const [pickupAddress, setPickupAddress] = useState();
     const [dropOffAddress, setDropOffAddress] = useState();
     const [maxLoad, setMaxLoad] = useState();
-    const [estimatedFuelLitters, setEstimatedFuelLitters] = useState();
+    const [estimatedFuelLitres, setEstimatedFuelLitres] = useState();
     const [estimatedFuelCost, setEstimatedFuelCost] = useState();
     const [pickupDate, setPickupDate] = useState();
     const [estimatedDropOffDate, setEstimatedDropOffDate] = useState();
@@ -110,7 +109,7 @@ const CreadeAndEditTripForm = forwardRef(
         setPickupAddress(trip?.pickupAddress);
         setDropOffAddress(trip?.dropOffAddress);
         setMaxLoad(trip?.maxLoad);
-        setEstimatedFuelLitters(trip?.estimatedFuelLitters);
+        setEstimatedFuelLitres(trip?.estimatedFuelLitres);
         setEstimatedFuelCost(trip?.estimatedFuelCost);
         setPickupDate(trip?.pickupDate);
         setEstimatedDropOffDate(trip?.estimatedDropOffDate);
@@ -124,7 +123,7 @@ const CreadeAndEditTripForm = forwardRef(
         setPickupAddress("");
         setDropOffAddress("");
         setMaxLoad("");
-        setEstimatedFuelLitters("");
+        setEstimatedFuelLitres("");
         setEstimatedFuelCost("");
         setPickupDate("");
         setEstimatedDropOffDate("");
@@ -200,7 +199,7 @@ const CreadeAndEditTripForm = forwardRef(
         pickupAddress,
         dropOffAddress,
         maxLoad,
-        estimatedFuelLitters,
+        estimatedFuelLitres,
         estimatedFuelCost,
         pickupDate,
         estimatedDropOffDate,
@@ -247,7 +246,7 @@ const CreadeAndEditTripForm = forwardRef(
       setPickupAddress(trip?.pickupAddress || "");
       setDropOffAddress(trip?.dropOffAddress || "");
       setMaxLoad(trip?.maxLoad || "");
-      setEstimatedFuelLitters(trip?.estimatedFuelLitters || "");
+      setEstimatedFuelLitres(trip?.estimatedFuelLitres || "");
       setEstimatedFuelCost(trip?.estimatedFuelCost || "");
       setPickupDate(trip?.pickupDate || "");
       setEstimatedDropOffDate(trip?.estimatedDropOffDate || "");
@@ -545,9 +544,9 @@ const CreadeAndEditTripForm = forwardRef(
                         fullWidth
                         label="Estimated Fuel Liters"
                         type="number"
-                        value={estimatedFuelLitters || ""}
+                        value={estimatedFuelLitres || ""}
                         onChange={(e) =>
-                          setEstimatedFuelLitters(e.target.value)
+                          setEstimatedFuelLitres(e.target.value)
                         }
                       />
                     </FormControl>
@@ -697,8 +696,8 @@ const CreadeAndEditTripForm = forwardRef(
                       fullWidth
                       label="Estimated Fuel Liters"
                       type="number"
-                      value={estimatedFuelLitters || ""}
-                      onChange={(e) => setEstimatedFuelLitters(e.target.value)}
+                      value={estimatedFuelLitres || ""}
+                      onChange={(e) => setEstimatedFuelLitres(e.target.value)}
                     />
                   </FormControl>
                   <FormControl sx={{ width: "50%" }} className="ms-1">

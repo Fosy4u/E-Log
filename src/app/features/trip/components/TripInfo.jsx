@@ -120,6 +120,27 @@ const TripInfo = ({ trip, expandChild }) => {
           secondary={getSecondaryActionText(trip?.status)}
         />
       </ListItem>
+      {trip?.status?.toLowerCase() === "delivered" && (
+        <ListItem
+          secondaryAction={
+            matches && (
+              <ListItemText
+                primary={displayDay(trip?.dropOffDate) || "not provided"}
+              />
+            )
+          }
+        >
+          <ListItemAvatar>
+            <Avatar>
+              <SignalWifiStatusbar4BarIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Delivered On"
+            secondary={getSecondaryActionText(displayDay(trip?.dropOffDate))}
+          />
+        </ListItem>
+      )}
       <ListItem
         secondaryAction={
           matches && (
@@ -249,9 +270,10 @@ const TripInfo = ({ trip, expandChild }) => {
         </ListItemAvatar>
         <ListItemText
           primary="Estimated Delivery Date"
-          secondary={trip?.estimatedDropOffDate && getSecondaryActionText(
-            displayDay(trip?.estimatedDropOffDate)
-          )}
+          secondary={
+            trip?.estimatedDropOffDate &&
+            getSecondaryActionText(displayDay(trip?.estimatedDropOffDate))
+          }
         />
       </ListItem>
       <ListItem
@@ -296,12 +318,37 @@ const TripInfo = ({ trip, expandChild }) => {
           )}
         />
       </ListItem>
+      {trip?.status.toLowerCase() === "delivered" && (
+        <ListItem
+          secondaryAction={
+            matches && (
+              <ListItemText
+                primary={
+                  numberWithCommas(trip?.actualFuelCost) || "not provided"
+                }
+              />
+            )
+          }
+        >
+          <ListItemAvatar>
+            <Avatar>
+              <PaymentsIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Actual Fuel Cost"
+            secondary={getSecondaryActionText(
+              numberWithCommas(trip?.actualFuelCost)
+            )}
+          />
+        </ListItem>
+      )}
 
       <ListItem
         secondaryAction={
           matches && (
             <ListItemText
-              primary={trip?.estimatedFuelLitters || "not provided"}
+              primary={trip?.estimatedFuelLitres || "not provided"}
             />
           )
         }
@@ -312,10 +359,31 @@ const TripInfo = ({ trip, expandChild }) => {
           </Avatar>
         </ListItemAvatar>
         <ListItemText
-          primary="Estimated Fuel Litters"
-          secondary={getSecondaryActionText(trip?.estimatedFuelLitters)}
+          primary="Estimated Fuel Litres"
+          secondary={getSecondaryActionText(trip?.estimatedFuelLitres)}
         />
       </ListItem>
+      {trip?.status.toLowerCase() === "delivered" && (
+        <ListItem
+          secondaryAction={
+            matches && (
+              <ListItemText
+                primary={trip?.actualFuelLitres || "not provided"}
+              />
+            )
+          }
+        >
+          <ListItemAvatar>
+            <Avatar>
+              <LocalGasStationIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary="Actual Fuel Litres"
+            secondary={getSecondaryActionText(trip?.actualFuelLitres)}
+          />
+        </ListItem>
+      )}
 
       <ListItem
         secondaryAction={

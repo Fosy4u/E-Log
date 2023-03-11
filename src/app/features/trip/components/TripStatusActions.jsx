@@ -26,6 +26,7 @@ import { Transition } from "../../../utils/transition";
 import Banner from "../../../utils/Banner";
 import TripCancelResume from "./TripCancelResume";
 import displayDay from "../../../utils/displayDay";
+import TripStatusActionsModal from "./TripStatusActionsModal";
 
 const steps = [
   {
@@ -66,13 +67,19 @@ export default function TripStatusActions({ trip }) {
   const currentUser = useSelector(globalSelectors.selectCurrentUser);
   const token = useSelector(globalSelectors.selectAuthToken);
   const status = trip?.status;
-
   const { organisationId } = useParams();
   const [activeStep, setActiveStep] = useState(0);
   const [vehicle, setVehicle] = useState();
   const [showBanner, setShowBanner] = useState(false);
   const [error, setError] = useState();
   const [showAssignVehicle, setShowAssignVehicle] = useState(false);
+  const [showMarkDeliveryForm, setShowMarkDeliveryForm] = useState(false);
+  const [showUploadDeliveryWaybill, setShowUploadDeliveryWaybill] =
+    useState(false);
+  const [showUploadRequestWaybill, setShowUploadRequestWaybill] =
+    useState(false);
+  const [actualFuelCost, setActualFuelCost] = useState();
+  const [actualFuelLitres, setActualFuelLitres] = useState();
   const [openCancelModal, setOpenCancelModal] = useState(false);
 
   const getTrucksQuery = organisationsApi.useGetAvailableTrucksQuery(
@@ -102,6 +109,7 @@ export default function TripStatusActions({ trip }) {
       .then((data) => {
         if (data?.data) {
           setShowAssignVehicle(false);
+          setShowMarkDeliveryForm(false);
           setError("");
           setShowBanner(false);
         }
@@ -119,10 +127,24 @@ export default function TripStatusActions({ trip }) {
       action,
       vehicleId: vehicle?._id,
       userId: currentUser?._id,
+      actualFuelCost,
+      actualFuelLitres,
     };
 
     if (action === "assign vehicle" && !vehicle) {
       setShowAssignVehicle(true);
+      return;
+    }
+    if (action === "mark en route" && !trip?.requestedWaybilImageUrl?.link) {
+      setShowUploadRequestWaybill(true);
+      return;
+    }
+    if (action === "mark delivered" && !trip?.deliveredWaybilImageUrl?.link) {
+      setShowUploadDeliveryWaybill(true);
+      return;
+    }
+    if (action === "mark delivered" && !showMarkDeliveryForm) {
+      setShowMarkDeliveryForm(true);
       return;
     }
     return renderAction(payload);
@@ -227,55 +249,59 @@ export default function TripStatusActions({ trip }) {
           </Box>
         </>
       )}
-      <Dialog open={showAssignVehicle} TransitionComponent={Transition}>
-        <DialogTitle>Assign Vehicle</DialogTitle>
-        <DialogContent>
-          {trucks?.length > 0 && (
-            <DialogContentText>
-              <Tiny className="text-danger">
-                Only activated trucks not currently on trip will be available
-                for selection
-              </Tiny>
-            </DialogContentText>
-          )}
-          {trucks?.length === 0 && (
-            <div className="w-100 d-flex text-center justify-content-center ">
-              <Banner show={true} severity={"error"}>
-                <Small>
-                  No available truck to assign to this trip. Please activate the
-                  truck or make sure the truck is not currently on a trip
-                </Small>
-              </Banner>
-            </div>
-          )}
-          {trucks?.length > 0 && (
-            <Select
-              value={vehicle || ""}
-              onChange={(e) => setVehicle(e.target.value)}
-              fullWidth
-            >
-              {trucks?.map((truck) => (
-                <MenuItem value={truck} key={truck?._id}>
-                  {truck?.manufacturer} {truck?.model}-{truck?.regNo}
-                </MenuItem>
-              ))}
-            </Select>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setShowAssignVehicle(false);
-              setVehicle();
-            }}
-          >
-            Cancel
-          </Button>
-          <Button disabled={!vehicle} onClick={handleNext}>
-            Assign
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+      <TripStatusActionsModal
+        instruction="Only activated trucks not currently on trip will be available
+                for selection"
+        open={showAssignVehicle}
+        close={() => setShowAssignVehicle(false)}
+        setVehicle={setVehicle}
+        vehicle={vehicle}
+        trucks={trucks}
+        handleNext={handleNext}
+        title="Assign Vehicle"
+        actionType={"assign vehicle"}
+        actionButtonLabel={"Assign"}
+        showActionButton
+      />
+      <TripStatusActionsModal
+        instruction="This fields are optional but filling them will help you track your fuel consumption, cost and other expenses. It helps in better trip analysis and planning"
+        open={showMarkDeliveryForm}
+        close={() => setShowMarkDeliveryForm(false)}
+        actualFuelCost={actualFuelCost}
+        setActualFuelCost={setActualFuelCost}
+        actualFuelLitres={actualFuelLitres}
+        setActualFuelLitres={setActualFuelLitres}
+        handleNext={handleNext}
+        title="Mark Delivered"
+        actionType={"mark delivered"}
+        actionButtonLabel={"Delivered"}
+        showActionButton
+      />
+      <TripStatusActionsModal
+        open={showUploadDeliveryWaybill || showUploadRequestWaybill}
+        close={() => {
+          setShowUploadDeliveryWaybill(false);
+          setShowUploadRequestWaybill(false);
+        }}
+        trip={trip}
+        actionType={
+          showUploadDeliveryWaybill
+            ? "upload delivered waybill"
+            : "upload requested waybill"
+        }
+        title={
+          showUploadDeliveryWaybill
+            ? "Upload Delivered Waybill"
+            : "Upload Load Waybill"
+        }
+        instruction={
+          showUploadDeliveryWaybill
+            ? "First upload the signed waybill for the delivered goods. This will help you track your delivered goods and also help you in case of any dispute"
+            : "First upload the waybill for the load before you mark the trip as en route. This will help you track your loaded goods and also help you in case of any dispute"
+        }
+      />
+
       <TripCancelResume
         open={openCancelModal}
         setOpen={setOpenCancelModal}

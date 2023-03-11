@@ -21,6 +21,7 @@ export default function TripDocUpload({
   setImage,
   field,
   tripId,
+  callback,
 }) {
   const { organisationId } = useParams();
   const currentUser = useSelector(globalSelectors.selectCurrentUser);
@@ -60,6 +61,7 @@ export default function TripDocUpload({
     })
       .then(() => {
         setImage();
+        callback();
         handleClose();
       })
 

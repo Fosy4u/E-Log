@@ -37,6 +37,13 @@ const headCells = [
     label: "Amount",
   },
   {
+    id: "transporter",
+    numeric: false,
+    disablePadding: false,
+    label: "Transporter",
+  },
+
+  {
     id: "details",
     numeric: false,
     disablePadding: false,
@@ -91,6 +98,7 @@ const TripTable = ({ allTrips }) => {
         product: { value: trip.productName || "N/P" },
         maxLoad: { value: trip.maxLoad || "N/P" },
         amount: { value: trip.price || "N/P" },
+        transporter: { value: trip?.vehicle?.transporter || "N/P" },
         details: { value: getDetails(trip) || "N/P", noFilter: true },
       };
 

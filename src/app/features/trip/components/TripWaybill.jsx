@@ -5,7 +5,7 @@ import Image from "../../../images/noImage.jpeg";
 import { Small } from "../../../components/Typography";
 import DocUpload from "./TripDocUpload";
 
-const TripWaybill = ({ title, field,image, tripId }) => {
+const TripWaybill = ({ title, field,image, tripId, callback }) => {
   const hiddenFileInput = useRef(null);
 
   const [selectedFile, setSelectedFile] = useState();
@@ -128,6 +128,7 @@ const TripWaybill = ({ title, field,image, tripId }) => {
         image={selectedFile}
         setImage={setSelectedFile}
         tripId={tripId}
+        callback={callback}
       />
     </Card>
   );

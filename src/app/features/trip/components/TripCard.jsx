@@ -60,7 +60,7 @@ const TripCard = ({ trip }) => {
         <CardTitle className="m-1">
           {" "}
           <Button color={getTripStatusColor(trip?.status)} size="small">
-            {trip?.status}
+            {trip?.status} {trip?.vehicle?.transporter? " - " + trip?.vehicle?.transporter : ""}
           </Button>
         </CardTitle>
 
